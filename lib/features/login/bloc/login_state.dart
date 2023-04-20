@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 
+import '../model/login_model.dart';
+
 @immutable
 abstract class LoginStateMain {}
 
@@ -39,11 +41,13 @@ class LoginUserState extends LoginStateMain {
 }
 
 class LoginButtonPressedState extends LoginStateMain {
-  LoginButtonPressedState();
+  final LoginDataModel loginDataModel;
+  LoginButtonPressedState({required this.loginDataModel});
 }
 
 class LoginFailedState extends LoginStateMain {
-  LoginFailedState();
+  final String message;
+  LoginFailedState({required this.message});
 }
 
 class LoginSuccessState extends LoginStateMain {
@@ -56,4 +60,8 @@ class LoginEmailErrorState extends LoginStateMain {
 
 class LoginPasswordErrorState extends LoginStateMain {
   LoginPasswordErrorState();
+}
+
+class LoggingUserState extends LoginStateMain {
+  LoggingUserState();
 }

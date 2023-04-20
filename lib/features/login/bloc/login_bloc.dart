@@ -1,9 +1,12 @@
 import 'dart:async';
 
-import 'package:expensetracker/features/login/event/login_event.dart';
-import 'package:expensetracker/features/login/state/login_state.dart';
+import 'package:expensetracker/features/login/bloc/login_event.dart';
+import 'package:expensetracker/features/login/bloc/login_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
+
+import '../model/login_model.dart';
 
 class LoginBloc extends Bloc<LoginEventMain, LoginStateMain> {
   LoginBloc() : super(LoginInitialState()) {
@@ -19,13 +22,12 @@ class LoginBloc extends Bloc<LoginEventMain, LoginStateMain> {
           else
             {emit(LoginPasswordUpdateState(password: event.password))}
         });
-    on<LoginButtonPressedEvent>((event, emit) => {
-          emit(LoginButtonPressedState())
-          // if (event.password.isEmpty)
-          //   {emit(LoginEmailErrorState())}
-          // else
-          //   {emit(LoginEmailUpdateState(email: event.password))}
-        });
+    on<LoginButtonPressedEvent>((event, emit) =>
+        {emit(LoginButtonPressedState(loginDataModel: event.loginDataModel))});
+    on<LoginSuccessEvent>((event, emit) => {emit(LoginSuccessState())});
+    on<LoginFailedEvent>(
+        (event, emit) => {emit(LoginFailedState(message: event.message))});
+    on<LoggingUserEvent>((event, emit) => {emit(LoggingUserState())});
   }
   updateEmail(String email) {
     _emailController.add(email);
@@ -40,20 +42,27 @@ class LoginBloc extends Bloc<LoginEventMain, LoginStateMain> {
 
   final _passwordController = BehaviorSubject<String>();
   Stream<String> watchPassword() => _passwordController.stream;
-  // Future<bool> enableButton() async {
-  //   return await _emailController.stream.isEmpty &&
-  //       await _passwordController.stream.isEmpty;
-  // }
-  Stream<bool> get enableButton => Rx.combineLatest2(
-      watchEmail(), watchPassword(), (a, b) => (a != "" && b != ""));
-  // final StreamController<bool> _enableButtonController =
-  //     StreamController<bool>();
-  // Stream<bool> get enableButton =>
-  //     StreamZip([_emailController.stream, _passwordController.stream])
-  //         .map((event) {
-  //       event;
-  //       return event.every((val) => val.isNotEmpty && val != "");
-  //     });
+
+  Stream<LoginDataModel?> get enableButton =>
+      Rx.combineLatest2(watchEmail(), watchPassword(), (a, b) {
+        if (a != "" && b != "") {
+          return LoginDataModel(email: a, password: b);
+        }
+        return null;
+      });
+  void firebaseUserLogin(
+      {required String email, required String password}) async {
+    add(LoggingUserEvent());
+    final firebaseAuth = FirebaseAuth.instance;
+    try {
+      var dd = await firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+      dd.additionalUserInfo;
+      add(LoginSuccessEvent());
+    } on FirebaseAuthException catch (e) {
+      add(LoginFailedEvent(message: e.message ?? "Something went wrong!!"));
+    }
+  }
 
   @override
   Future<void> close() {

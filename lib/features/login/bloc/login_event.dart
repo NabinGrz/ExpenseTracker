@@ -1,3 +1,4 @@
+import 'package:expensetracker/features/login/model/login_model.dart';
 import 'package:flutter/material.dart';
 
 @immutable
@@ -14,7 +15,8 @@ class LoginPasswordUpdateEvent extends LoginEventMain {
 }
 
 class LoginButtonPressedEvent extends LoginEventMain {
-  LoginButtonPressedEvent();
+  final LoginDataModel loginDataModel;
+  LoginButtonPressedEvent({required this.loginDataModel});
 }
 
 class LoginSuccessEvent extends LoginEventMain {
@@ -22,9 +24,10 @@ class LoginSuccessEvent extends LoginEventMain {
 }
 
 class LoginFailedEvent extends LoginEventMain {
-  LoginFailedEvent();
+  final String message;
+  LoginFailedEvent({required this.message});
 }
 
-class LoginLoadingEvent extends LoginEventMain {
-  LoginLoadingEvent();
+class LoggingUserEvent extends LoginEventMain {
+  LoggingUserEvent();
 }

@@ -1,4 +1,4 @@
-import 'package:expensetracker/features/login/screen/login_screen.dart';
+import 'package:expensetracker/features/dashboard/screen/dashboard_screen.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
 class ExpenseTrackerApp extends StatefulWidget {
@@ -11,6 +11,6 @@ class ExpenseTrackerApp extends StatefulWidget {
 class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
   @override
   Widget build(BuildContext context) {
-    return const LoginScreen();
+    return const DashboardScreen();
   }
 }

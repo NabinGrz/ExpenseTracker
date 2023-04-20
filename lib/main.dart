@@ -1,19 +1,21 @@
 import 'package:expensetracker/expense_tracker_app.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
 
-void main() async {
-  initializeFirebaseMessaging();
+void main() {
+  initializeFirebase();
   runApp(const MyApp());
 }
 
-Future<void> initializeFirebaseMessaging() async {
+Future<void> initializeFirebase() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  FirebaseAuth.instance;
 }
 
 class MyApp extends StatelessWidget {
