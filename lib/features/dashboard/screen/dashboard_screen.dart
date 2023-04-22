@@ -1,7 +1,6 @@
 import 'package:expensetracker/core/constants/app_styles.dart';
 import 'package:expensetracker/core/utils/extensions.dart';
 import 'package:expensetracker/core/utils/firebase_query_handler.dart';
-import 'package:expensetracker/features/dashboard/bloc/calendar_event.dart';
 import 'package:expensetracker/features/dashboard/models/expense_model.dart';
 import 'package:expensetracker/features/dashboard/widgets/card_widget.dart';
 import 'package:expensetracker/global_widgets/sized_box.dart';
@@ -20,27 +19,8 @@ class DashboardScreen extends StatelessWidget {
 
   final DateTime _focusedDay = DateTime.now();
 
-  // final firebaseFireStore = FirebaseFirestore.instance;
   List<ExpenseDataModel> todaysExpenseList = [];
-
-  void _onDaySelected(
-      DateTime selectedDay, DateTime focusedDay, BuildContext context) {
-    context
-        .read<CalendarBloc>()
-        .add(CalendarDaySelectedEvent(selectedDay: selectedDay));
-  }
-
-  // test(DateTime selectedDate) async {
-  //   var data =
-  //       await FirebaseQueryHelper.getCollections(collectionPath: "expenses");
-  //   mapList.clear();
-  //   var dd = mapList.where((v) {
-  //     var createdDate = v.created_at.toDate().dateFormat("yMd");
-  //     var selectedDay = selectedDate.dateFormat("yMd");
-  //     return selectedDay == createdDate;
-  //   }).toList();
-  //   dd;
-  // }
+  int totalAmount = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +38,11 @@ class DashboardScreen extends StatelessWidget {
         ),
         body: BlocConsumer<CalendarBloc, CalendarState>(
           listener: (calendarBloc, state) {
-            if (state is CalendarDaySelectedState) {}
+            if (state is CalendarInitialState) {
+              //total_cash
+              FirebaseQueryHelper.getSingleDocument(
+                  collectionPath: "total_cash", docID: "KND5OKuW1fntgtIOyEvT");
+            }
           },
           builder: (calendarBloc, state) {
             return Column(
@@ -71,9 +55,7 @@ class DashboardScreen extends StatelessWidget {
                   child: Stack(
                     children: [
                       Container(
-                        // height: double.infinity,
                         width: MediaQuery.of(context).size.width,
-                        // height: 200.h,
                         color: const Color(0XFF1C2125),
                       ),
                       Align(
@@ -91,119 +73,175 @@ class DashboardScreen extends StatelessWidget {
                         alignment: Alignment.bottomCenter,
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: const [
-                              CardWidget(
-                                  cardColor: Color(0xff4a55e2),
-                                  cardTitle: "Total Cash"),
-                              // sizedBox(width: 6.w),
-                              CardWidget(
-                                  cardColor: Color(0xffd4756b),
-                                  cardTitle: "In Cash"),
-                            ],
-                          ),
+                          child: StreamBuilder(
+                              stream:
+                                  FirebaseQueryHelper.getSingleDocumentAsStream(
+                                      collectionPath: "total_cash",
+                                      docID: "KND5OKuW1fntgtIOyEvT"),
+                              builder: (context, snapshot) {
+                                List<double> amounts = [];
+                                if (snapshot.data != null) {
+                                  amounts.clear();
+                                  snapshot.data?.data()?.forEach((key, value) {
+                                    amounts.add(value);
+                                  });
+                                }
+                                return !snapshot.hasData
+                                    ? Container()
+                                    : Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          CardWidget(
+                                              cardColor:
+                                                  const Color(0xff4a55e2),
+                                              cardTitle: "Total Cash",
+                                              cardAmount: "${amounts[0]}"),
+                                          CardWidget(
+                                            cardColor: const Color(0xffd4756b),
+                                            cardTitle: "In Bank",
+                                            cardAmount: "${amounts[1]}",
+                                          ),
+                                        ],
+                                      );
+                              }),
                         ),
                       ),
                     ],
                   ),
                 ),
-                sizedBox(height: 10.h),
-                StreamBuilder(
-                    stream: FirebaseQueryHelper.getCollectionsAsStream(
-                        collectionPath: "expenses"),
-                    builder: (calendarBloc, snapshot) {
-                      if (snapshot.data != null) {
-                        todaysExpenseList.clear();
-                        for (var element in snapshot.data!.docs) {
-                          Map<String, dynamic> finalData = {
-                            ...element.data(),
-                            'id': element.id
-                          };
-                          todaysExpenseList
-                              .add(ExpenseDataModel.fromJson(finalData));
-                        }
-                      }
-                      return Expanded(
-                          flex: 2,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: todaysExpenseList.where((v) {
-                              var createdDate =
-                                  v.created_at.toDate().dateFormat("yMd");
-                              var currentDay = DateTime.now().dateFormat("yMd");
-                              return createdDate == currentDay;
-                            }).length,
-                            itemBuilder: (context, index) {
-                              return Dismissible(
-                                background: Card(
-                                  color: Colors.red,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: const [
-                                      Icon(
-                                        Icons.delete,
-                                        size: 30,
-                                        color: Colors.white,
-                                      )
-                                    ],
-                                  ),
+                Expanded(
+                  flex: 2,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w),
+                    child: StreamBuilder(
+                        stream: FirebaseQueryHelper.getCollectionsAsStream(
+                            collectionPath: "expenses"),
+                        builder: (calendarBloc, snapshot) {
+                          if (snapshot.data != null) {
+                            todaysExpenseList.clear();
+                            for (var element in snapshot.data!.docs) {
+                              Map<String, dynamic> finalData = {
+                                ...element.data(),
+                                'id': element.id
+                              };
+                              var exp = ExpenseDataModel.fromJson(finalData);
+                              if (exp.created_at.toDate().dateFormat("yMd") ==
+                                  DateTime.now().dateFormat("yMd")) {
+                                todaysExpenseList.add(exp);
+                              }
+                              totalAmount = todaysExpenseList.length;
+                              for (var element in todaysExpenseList) {
+                                totalAmount =
+                                    totalAmount + int.parse(element.amount);
+                              }
+                            }
+                          }
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              sizedBox(
+                                height: 20.h,
+                              ),
+                              Text(
+                                "Today's Expense",
+                                style: TextStyle(
+                                  fontSize: AppFontSize.fontSize18,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                key: UniqueKey(),
-                                onDismissed: (direction) {
-                                  FirebaseQueryHelper
-                                      .deleteDocumentOfCollection(
-                                          collectionID: "expenses",
-                                          docID: todaysExpenseList[index].id ??
-                                              "-1");
-                                },
-                                child: Card(
-                                  child: ListTile(
-                                    onLongPress: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AddExpenseDialog(
-                                            isEdit: true,
-                                            expenseDataModel:
-                                                todaysExpenseList[index],
+                              ),
+                              Text(
+                                "Total: Rs $totalAmount",
+                                style: TextStyle(
+                                    fontSize: AppFontSize.fontSize12,
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.grey),
+                              ),
+                              sizedBox(
+                                height: 10.h,
+                              ),
+                              ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(),
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: todaysExpenseList.where((v) {
+                                  var createdDate =
+                                      v.created_at.toDate().dateFormat("yMd");
+                                  var currentDay =
+                                      DateTime.now().dateFormat("yMd");
+                                  return createdDate == currentDay;
+                                }).length,
+                                itemBuilder: (context, index) {
+                                  return Dismissible(
+                                    background: Card(
+                                      color: Colors.red,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: const [
+                                          Icon(
+                                            Icons.delete,
+                                            size: 30,
+                                            color: Colors.white,
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    key: UniqueKey(),
+                                    onDismissed: (direction) {
+                                      FirebaseQueryHelper
+                                          .deleteDocumentOfCollection(
+                                              collectionID: "expenses",
+                                              docID:
+                                                  todaysExpenseList[index].id ??
+                                                      "-1");
+                                    },
+                                    child: Card(
+                                      child: ListTile(
+                                        onLongPress: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AddExpenseDialog(
+                                                isEdit: true,
+                                                expenseDataModel:
+                                                    todaysExpenseList[index],
+                                              );
+                                            },
                                           );
                                         },
-                                      );
-                                    },
-                                    title: Text(
-                                      todaysExpenseList[index].expense_name,
-                                      style: TextStyle(
-                                        fontSize: AppFontSize.fontSize14,
-                                        fontWeight: FontWeight.w600,
+                                        title: Text(
+                                          todaysExpenseList[index].expense_name,
+                                          style: TextStyle(
+                                            fontSize: AppFontSize.fontSize14,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                        subtitle: Text(todaysExpenseList[index]
+                                            .expense_categories),
+                                        trailing: Text(
+                                          "Rs: ${todaysExpenseList[index].amount}",
+                                          style: TextStyle(
+                                            fontSize: AppFontSize.fontSize16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                    subtitle: Text(todaysExpenseList[index]
-                                        .expense_categories),
-                                    trailing: Text(
-                                      "Rs: ${todaysExpenseList[index].amount}",
-                                      style: TextStyle(
-                                        fontSize: AppFontSize.fontSize16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ));
-                    }),
+                                  );
+                                },
+                              ),
+                            ],
+                          );
+                        }),
+                  ),
+                ),
               ],
             );
           },
         ),
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
-              // Navigator.push(context, CupertinoPageRoute(
-              //   builder: (context) {
-              //     return const AddExpenseScreen();
-              //   },
-              // ));
               showDialog(
                 context: context,
                 builder: (context) {

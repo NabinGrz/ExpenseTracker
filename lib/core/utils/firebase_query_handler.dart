@@ -4,7 +4,7 @@ import 'package:expensetracker/core/utils/snackbar.dart';
 class FirebaseQueryHelper {
   FirebaseQueryHelper._();
   static final firebaseFireStore = FirebaseFirestore.instance;
-  static Future<QuerySnapshot<Map<String, dynamic>>?> getCollections(
+  static Future<QuerySnapshot<Map<String, dynamic>>?> getCollectionsAsFuture(
       {required String collectionPath}) async {
     try {
       final data = await firebaseFireStore.collection(collectionPath).get();
@@ -35,10 +35,21 @@ class FirebaseQueryHelper {
     try {
       var data =
           await firebaseFireStore.collection(collectionPath).doc(docID).get();
-      data.data()?.forEach((key, value) {
-        value;
-      });
+      return data;
+    } on FirebaseException catch (e) {
+      showSnackBar(
+          message: e.message ?? "Something Went Wrong!!",
+          type: SnackBarTypes.Error);
+    }
+    return null;
+  }
 
+  static Stream<DocumentSnapshot<Map<String, dynamic>>>?
+      getSingleDocumentAsStream(
+          {required String collectionPath, required String docID}) {
+    try {
+      var data =
+          firebaseFireStore.collection(collectionPath).doc(docID).snapshots();
       return data;
     } on FirebaseException catch (e) {
       showSnackBar(

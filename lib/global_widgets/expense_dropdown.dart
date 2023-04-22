@@ -49,7 +49,7 @@ class _ExpenseDropDownState extends State<ExpenseDropDown> {
         );
       },
       suggestionsCallback: (pattern) async {
-        var collectionData = await FirebaseQueryHelper.getCollections(
+        var collectionData = await FirebaseQueryHelper.getCollectionsAsFuture(
             collectionPath: "expense-categories");
         Map<String, dynamic>? data = {};
         if (collectionData?.docs != null) {

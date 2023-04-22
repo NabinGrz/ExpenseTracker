@@ -8,15 +8,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CardWidget extends StatelessWidget {
   final Color cardColor;
   final String cardTitle;
+  final String cardAmount;
   const CardWidget(
-      {super.key, required this.cardColor, required this.cardTitle});
+      {super.key,
+      required this.cardColor,
+      required this.cardTitle,
+      required this.cardAmount});
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 0,
+      elevation: 8,
       color: cardColor,
-      margin: EdgeInsets.only(left: 12.w),
+      margin: EdgeInsets.only(left: 12.w, bottom: 12.h),
       child: SizedBox(
         height: 160.h,
         width: MediaQuery.of(context).size.width * 0.9,
@@ -40,7 +44,7 @@ class CardWidget extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        "RS 23082",
+                        "RS $cardAmount",
                         style: TextStyle(
                           fontSize: AppFontSize.fontSize26,
                           fontWeight: FontWeight.w300,
