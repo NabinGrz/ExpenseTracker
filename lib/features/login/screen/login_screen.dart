@@ -4,6 +4,7 @@ import 'package:expensetracker/features/login/bloc/login_event.dart';
 import 'package:expensetracker/features/login/bloc/login_state.dart';
 import 'package:expensetracker/features/login/model/login_model.dart';
 import 'package:expensetracker/features/register/screen/register_screen.dart';
+import 'package:expensetracker/global_widgets/elevated_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,7 +25,7 @@ class LoginScreen extends StatelessWidget {
           _,
         ) =>
             LoginBloc(),
-        child: BlocConsumer<LoginBloc, LoginStateMain>(
+        child: BlocConsumer<LoginBloc, LoginState>(
           listener: (loginContext, state) {
             if (state is LoginButtonPressedState) {
               // ScaffoldMessenger.of(context)
@@ -41,7 +42,7 @@ class LoginScreen extends StatelessWidget {
               passwordController.clear();
               Navigator.push(context, CupertinoPageRoute(
                 builder: (context) {
-                  return const DashboardScreen();
+                  return DashboardScreen();
                 },
               ));
             } else if (state is LoginFailedState) {
@@ -90,7 +91,7 @@ class LoginScreen extends StatelessWidget {
                       stream: loginContext.watch<LoginBloc>().enableButton,
                       builder:
                           (context, AsyncSnapshot<LoginDataModel?> snapshot) {
-                        return ElevatedButton(
+                        return elevatedButton(
                             onPressed: snapshot.data == null
                                 ? null
                                 : () {

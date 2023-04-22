@@ -16,22 +16,24 @@ enum SnackBarTypes {
 void showSnackBar({
   String title = '',
   required String message,
-  required SnackBarTypes type,
+  SnackBarTypes? type,
   Color? backgroundColor,
   Color? textColor,
 }) {
   //Setting Colors based on type
   final textColorToUse =
       type == SnackBarTypes.Custom ? textColor : Colors.white;
-  final backgroundColorToUse = type == SnackBarTypes.Custom
-      ? backgroundColor
-      : type == SnackBarTypes.Error
-          ? Colors.red
-          : type == SnackBarTypes.Warning
-              ? Colors.amber
-              : type == SnackBarTypes.Info
-                  ? Colors.blue
-                  : Colors.green;
+  final backgroundColorToUse = type == null
+      ? Colors.green
+      : type == SnackBarTypes.Custom
+          ? backgroundColor
+          : type == SnackBarTypes.Error
+              ? Colors.red
+              : type == SnackBarTypes.Warning
+                  ? Colors.amber
+                  : type == SnackBarTypes.Info
+                      ? Colors.blue
+                      : Colors.green;
 
   // if (type == SnackBarTypes.Error) {
   //   clearFocus();

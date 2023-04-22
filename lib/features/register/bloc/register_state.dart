@@ -4,17 +4,17 @@ import 'package:expensetracker/features/register/model/register_model.dart';
 import 'package:flutter/material.dart';
 
 @immutable
-abstract class RegisterStateMain {}
+abstract class RegisterSState {}
 
-class RegisterInitialState extends RegisterStateMain {
+class RegisterInitialState extends RegisterSState {
   RegisterInitialState();
 }
 
-class RegisterLoadingState extends RegisterStateMain {
+class RegisterLoadingState extends RegisterSState {
   RegisterLoadingState();
 }
 
-class RegisterEmailUpdateState extends RegisterStateMain {
+class RegisterEmailUpdateState extends RegisterSState {
   final String email;
 
   RegisterEmailUpdateState({
@@ -22,7 +22,7 @@ class RegisterEmailUpdateState extends RegisterStateMain {
   });
 }
 
-class RegisterPasswordUpdateState extends RegisterStateMain {
+class RegisterPasswordUpdateState extends RegisterSState {
   final String password;
 
   RegisterPasswordUpdateState({
@@ -30,7 +30,7 @@ class RegisterPasswordUpdateState extends RegisterStateMain {
   });
 }
 
-class RegisterConfirmPasswordUpdateState extends RegisterStateMain {
+class RegisterConfirmPasswordUpdateState extends RegisterSState {
   final String password;
 
   RegisterConfirmPasswordUpdateState({
@@ -38,7 +38,7 @@ class RegisterConfirmPasswordUpdateState extends RegisterStateMain {
   });
 }
 
-class RegisterUserState extends RegisterStateMain {
+class RegisterUserState extends RegisterSState {
   final String email;
   final String password;
   RegisterUserState({
@@ -47,31 +47,31 @@ class RegisterUserState extends RegisterStateMain {
   });
 }
 
-class RegisterButtonPressedState extends RegisterStateMain {
+class RegisterButtonPressedState extends RegisterSState {
   final RegisterDataModel registerDataModel;
   RegisterButtonPressedState({required this.registerDataModel});
 }
 
-class RegisterFailedState extends RegisterStateMain {
+class RegisterFailedState extends RegisterSState {
   RegisterFailedState();
 }
 
-class RegisterSuccessState extends RegisterStateMain {
+class RegisterSuccessState extends RegisterSState {
   RegisterSuccessState();
 }
 
-class RegisterEmailErrorState extends RegisterStateMain {
+class RegisterEmailErrorState extends RegisterSState {
   RegisterEmailErrorState();
 }
 
-class RegisterPasswordErrorState extends RegisterStateMain {
+class RegisterPasswordErrorState extends RegisterSState {
   RegisterPasswordErrorState();
 }
 
-class RegisterConfirmPasswordErrorState extends RegisterStateMain {
+class RegisterConfirmPasswordErrorState extends RegisterSState {
   RegisterConfirmPasswordErrorState();
 }
 
-class RegisteringUserState extends RegisterStateMain {
+class RegisteringUserState extends RegisterSState {
   RegisteringUserState();
 }

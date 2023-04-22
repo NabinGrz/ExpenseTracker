@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
-class RegisterBloc extends Bloc<RegisterEventMain, RegisterStateMain> {
+class RegisterBloc extends Bloc<RegisterEventMain, RegisterSState> {
   RegisterBloc() : super(RegisterInitialState()) {
     on<RegisterUserNameUpdateEvent>((event, emit) => {
           if (event.email.isEmpty)

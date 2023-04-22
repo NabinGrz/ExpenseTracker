@@ -8,7 +8,7 @@ import 'package:rxdart/rxdart.dart';
 
 import '../model/login_model.dart';
 
-class LoginBloc extends Bloc<LoginEventMain, LoginStateMain> {
+class LoginBloc extends Bloc<LoginEventMain, LoginState> {
   LoginBloc() : super(LoginInitialState()) {
     on<LoginUserNameUpdateEvent>((event, emit) => {
           if (event.email.isEmpty)

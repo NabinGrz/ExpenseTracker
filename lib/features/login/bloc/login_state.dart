@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 import '../model/login_model.dart';
 
 @immutable
-abstract class LoginStateMain {}
+abstract class LoginState {}
 
-class LoginInitialState extends LoginStateMain {
+class LoginInitialState extends LoginState {
   LoginInitialState();
 }
 
-class LoginLoadingState extends LoginStateMain {
+class LoginLoadingState extends LoginState {
   LoginLoadingState();
 }
 
-class LoginEmailUpdateState extends LoginStateMain {
+class LoginEmailUpdateState extends LoginState {
   final String email;
 
   LoginEmailUpdateState({
@@ -23,7 +23,7 @@ class LoginEmailUpdateState extends LoginStateMain {
   });
 }
 
-class LoginPasswordUpdateState extends LoginStateMain {
+class LoginPasswordUpdateState extends LoginState {
   final String password;
 
   LoginPasswordUpdateState({
@@ -31,7 +31,7 @@ class LoginPasswordUpdateState extends LoginStateMain {
   });
 }
 
-class LoginUserState extends LoginStateMain {
+class LoginUserState extends LoginState {
   final String email;
   final String password;
   LoginUserState({
@@ -40,28 +40,28 @@ class LoginUserState extends LoginStateMain {
   });
 }
 
-class LoginButtonPressedState extends LoginStateMain {
+class LoginButtonPressedState extends LoginState {
   final LoginDataModel loginDataModel;
   LoginButtonPressedState({required this.loginDataModel});
 }
 
-class LoginFailedState extends LoginStateMain {
+class LoginFailedState extends LoginState {
   final String message;
   LoginFailedState({required this.message});
 }
 
-class LoginSuccessState extends LoginStateMain {
+class LoginSuccessState extends LoginState {
   LoginSuccessState();
 }
 
-class LoginEmailErrorState extends LoginStateMain {
+class LoginEmailErrorState extends LoginState {
   LoginEmailErrorState();
 }
 
-class LoginPasswordErrorState extends LoginStateMain {
+class LoginPasswordErrorState extends LoginState {
   LoginPasswordErrorState();
 }
 
-class LoggingUserState extends LoginStateMain {
+class LoggingUserState extends LoginState {
   LoggingUserState();
 }

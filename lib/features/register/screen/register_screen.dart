@@ -25,7 +25,7 @@ class RegisterScreen extends StatelessWidget {
           _,
         ) =>
             RegisterBloc(),
-        child: BlocConsumer<RegisterBloc, RegisterStateMain>(
+        child: BlocConsumer<RegisterBloc, RegisterSState>(
           listener: (loginContext, state) {
             if (state is RegisterButtonPressedState) {
               loginContext.read<RegisterBloc>().firebaseRegisterUser(
@@ -56,6 +56,7 @@ class RegisterScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   textFormField(
+                      hintText: "example@gmail.com",
                       controller: emailController,
                       icon: const Icon(Icons.email),
                       onChanged: (email) {
