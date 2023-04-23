@@ -20,7 +20,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
     return PersistentTabView(
       context,
       controller: _controller,
-      screens: [DashboardScreen(), const ReportScreen(), DashboardScreen()],
+      screens: [DashboardScreen(), ReportScreen(), DashboardScreen()],
       items: _navBarsItems(),
       confineInSafeArea: true,
       backgroundColor: Colors.white, // Default is Colors.white.

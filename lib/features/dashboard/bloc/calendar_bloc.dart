@@ -1,5 +1,8 @@
+import 'package:expensetracker/core/utils/firebase_query_handler.dart';
 import 'package:expensetracker/features/dashboard/bloc/calendar_event.dart';
+import 'package:expensetracker/features/dashboard/models/expense_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'calendar_state.dart';
 
@@ -8,14 +11,24 @@ class CalendarBloc extends Bloc<CalendarEventMain, CalendarState> {
     on<CalendarDaySelectedEvent>((event, emit) =>
         emit(CalendarDaySelectedState(selectedDate: event.selectedDay)));
   }
+  updateExpenses() async {
+    var data = await FirebaseQueryHelper.getCollectionsAsFuture(
+        collectionPath: "expenses");
+    _expenseNameList.clear();
+    if (data?.docs != null) {
+      for (var element in data!.docs) {
+        _expenseNameList.add(ExpenseDataModel.fromJson(element.data()));
+      }
+    }
+    _expenseNameListController.add(_expenseNameList);
+  }
 
   // final _widgetListController = StreamController<List<String>>.broadcast();
   //**NOTE these two are same thing */
-  // final _expenseNameListController =
-  //     BehaviorSubject<List<TextEditingController>>();
-  // final List<TextEditingController> _expenseNameList = [];
-  // Stream<List<TextEditingController>> get expenseNameListStream =>
-  //     _expenseNameListController.stream;
+  final _expenseNameListController = BehaviorSubject<List<ExpenseDataModel>>();
+  final List<ExpenseDataModel> _expenseNameList = [];
+  Stream<List<ExpenseDataModel>> get expenseNameListStream =>
+      _expenseNameListController.stream;
 
   // final _amountListController =
   //     StreamController<List<TextEditingController>>.broadcast();

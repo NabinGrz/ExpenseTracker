@@ -119,6 +119,7 @@ class DashboardScreen extends StatelessWidget {
                             collectionPath: "expenses"),
                         builder: (calendarBloc, snapshot) {
                           if (snapshot.data != null) {
+                            totalAmount = 0;
                             todaysExpenseList.clear();
                             for (var element in snapshot.data!.docs) {
                               Map<String, dynamic> finalData = {
@@ -129,12 +130,13 @@ class DashboardScreen extends StatelessWidget {
                               if (exp.created_at.toDate().dateFormat("yMd") ==
                                   DateTime.now().dateFormat("yMd")) {
                                 todaysExpenseList.add(exp);
-                              }
-                              totalAmount = todaysExpenseList.length;
-                              for (var element in todaysExpenseList) {
                                 totalAmount =
-                                    totalAmount + int.parse(element.amount);
+                                    totalAmount + int.parse(exp.amount);
                               }
+                              // for (var element in todaysExpenseList) {
+                              //   totalAmount =
+                              //       totalAmount + int.parse(element.amount);
+                              // }
                             }
                           }
                           return Column(
