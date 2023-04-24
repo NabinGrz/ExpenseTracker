@@ -21,6 +21,7 @@ class CalendarBloc extends Bloc<CalendarEventMain, CalendarState> {
       }
     }
     _expenseNameListController.add(_expenseNameList);
+    add(CalendarDaySelectedEvent(selectedDay: DateTime.now()));
   }
 
   // final _widgetListController = StreamController<List<String>>.broadcast();

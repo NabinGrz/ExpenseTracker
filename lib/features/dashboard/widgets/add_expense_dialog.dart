@@ -1,3 +1,4 @@
+import 'package:expensetracker/core/utils/extensions.dart';
 import 'package:expensetracker/core/utils/firebase_query_handler.dart';
 import 'package:expensetracker/features/dashboard/models/expense_model.dart';
 import 'package:expensetracker/global_widgets/elevated_button.dart';
@@ -23,14 +24,20 @@ class AddExpenseDialog extends StatelessWidget {
   String selectedSuggestion = "";
   @override
   Widget build(BuildContext context) {
-    if (isEdit) assignValues();
     return alertDialogWidget(context);
   }
 
-  void assignValues() {
+  void assignValues(context) {
     categoriesController.text = expenseDataModel?.expense_categories ?? "";
+    context
+        .read<AddExpenseBloc>()
+        .updateExpenseCategory(categoriesController.text);
     expenseNameController.text = expenseDataModel?.expense_name ?? "";
+    context
+        .read<AddExpenseBloc>()
+        .updateExpenseName(expenseNameController.text);
     amountController.text = expenseDataModel?.amount ?? "";
+    context.read<AddExpenseBloc>().updateExpenseAmount(amountController.text);
   }
 
   Widget alertDialogWidget(BuildContext context) {
@@ -44,6 +51,21 @@ class AddExpenseDialog extends StatelessWidget {
         create: (addExpenseBloc) => AddExpenseBloc(),
         child: BlocBuilder<AddExpenseBloc, AddExpenseState>(
           builder: (addExpenseBloc, state) {
+            if (isEdit) {
+              categoriesController.text =
+                  expenseDataModel?.expense_categories ?? "";
+              addExpenseBloc
+                  .read<AddExpenseBloc>()
+                  .updateExpenseCategory(categoriesController.text);
+              expenseNameController.text = expenseDataModel?.expense_name ?? "";
+              addExpenseBloc
+                  .read<AddExpenseBloc>()
+                  .updateExpenseName(expenseNameController.text);
+              amountController.text = expenseDataModel?.amount ?? "";
+              addExpenseBloc
+                  .read<AddExpenseBloc>()
+                  .updateExpenseAmount(amountController.text);
+            }
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -126,7 +148,8 @@ class AddExpenseDialog extends StatelessWidget {
                                       'expense_name':
                                           expenseNameController.text,
                                       'amount': amountController.text,
-                                      'created_at': DateTime.now().toString()
+                                      'created_at': DateTime.now().dateFormat(
+                                          "yyyy-MM-dd 00:00:00.00000")
                                     };
                                     dd;
                                     FirebaseQueryHelper.addDocumentToCollection(

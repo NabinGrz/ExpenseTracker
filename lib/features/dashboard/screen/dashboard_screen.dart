@@ -3,6 +3,8 @@ import 'package:expensetracker/core/utils/extensions.dart';
 import 'package:expensetracker/core/utils/firebase_query_handler.dart';
 import 'package:expensetracker/features/dashboard/models/expense_model.dart';
 import 'package:expensetracker/features/dashboard/widgets/card_widget.dart';
+import 'package:expensetracker/global_widgets/category_image_card.dart';
+import 'package:expensetracker/global_widgets/elevated_button.dart';
 import 'package:expensetracker/global_widgets/sized_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,7 +41,6 @@ class DashboardScreen extends StatelessWidget {
         body: BlocConsumer<CalendarBloc, CalendarState>(
           listener: (calendarBloc, state) {
             if (state is CalendarInitialState) {
-              //total_cash
               FirebaseQueryHelper.getSingleDocument(
                   collectionPath: "total_cash", docID: "KND5OKuW1fntgtIOyEvT");
             }
@@ -133,10 +134,6 @@ class DashboardScreen extends StatelessWidget {
                                 totalAmount =
                                     totalAmount + int.parse(exp.amount);
                               }
-                              // for (var element in todaysExpenseList) {
-                              //   totalAmount =
-                              //       totalAmount + int.parse(element.amount);
-                              // }
                             }
                           }
                           return Column(
@@ -191,15 +188,57 @@ class DashboardScreen extends StatelessWidget {
                                     ),
                                     key: UniqueKey(),
                                     onDismissed: (direction) {
-                                      FirebaseQueryHelper
-                                          .deleteDocumentOfCollection(
-                                              collectionID: "expenses",
-                                              docID:
-                                                  todaysExpenseList[index].id ??
-                                                      "-1");
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertDialog(
+                                            title: const Text("Confirmation"),
+                                            content: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  "Do you want to delete?\nNote: This can't be undone.",
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: AppFontSize
+                                                          .fontSize14),
+                                                )
+                                              ],
+                                            ),
+                                            actions: [
+                                              elevatedButton(
+                                                  onPressed: () {
+                                                    FirebaseQueryHelper
+                                                        .deleteDocumentOfCollection(
+                                                            collectionID:
+                                                                "expenses",
+                                                            docID:
+                                                                todaysExpenseList[
+                                                                            index]
+                                                                        .id ??
+                                                                    "-1");
+                                                  },
+                                                  child:
+                                                      const Text("Yes Sure!!")),
+                                              elevatedButton(
+                                                  backgroundColor: Colors.red,
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text("Cancel"))
+                                            ],
+                                          );
+                                        },
+                                      );
                                     },
                                     child: Card(
                                       child: ListTile(
+                                        leading: imageCard(
+                                          categoryName: todaysExpenseList[index]
+                                              .expense_categories,
+                                        ),
                                         onLongPress: () {
                                           showDialog(
                                             context: context,
@@ -225,6 +264,7 @@ class DashboardScreen extends StatelessWidget {
                                           "Rs: ${todaysExpenseList[index].amount}",
                                           style: TextStyle(
                                             fontSize: AppFontSize.fontSize16,
+                                            color: const Color(0xff3cb980),
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
