@@ -6,6 +6,7 @@ import 'package:expensetracker/features/dashboard/widgets/card_widget.dart';
 import 'package:expensetracker/global_widgets/category_image_card.dart';
 import 'package:expensetracker/global_widgets/elevated_button.dart';
 import 'package:expensetracker/global_widgets/sized_box.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,9 +24,17 @@ class DashboardScreen extends StatelessWidget {
 
   List<ExpenseDataModel> todaysExpenseList = [];
   int totalAmount = 0;
+  // imageToBase64() async {
+  //   File imagefile = File("assets/icons/bike.png"); //convert Path to File
+  //   Uint8List imagebytes = await imagefile.readAsBytes(); //convert to bytes
+  //   String base64string =
+  //       base64.encode(imagebytes); //convert bytes to base64 string
+  //   print(base64string);
+  // }
 
   @override
   Widget build(BuildContext context) {
+    // imageToBase64();
     return BlocProvider(
       create: (context) => CalendarBloc(),
       child: Scaffold(
@@ -142,137 +151,172 @@ class DashboardScreen extends StatelessWidget {
                               sizedBox(
                                 height: 20.h,
                               ),
-                              Text(
-                                "Today's Expense",
-                                style: TextStyle(
-                                  fontSize: AppFontSize.fontSize18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Text(
-                                "Total: Rs $totalAmount",
-                                style: TextStyle(
-                                    fontSize: AppFontSize.fontSize12,
-                                    fontWeight: FontWeight.w300,
-                                    color: Colors.grey),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Today's Expense",
+                                    style: TextStyle(
+                                      fontSize: AppFontSize.fontSize18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Rs: $totalAmount",
+                                    style: TextStyle(
+                                        fontSize: AppFontSize.fontSize12,
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.blueGrey),
+                                  ),
+                                ],
                               ),
                               sizedBox(
                                 height: 10.h,
                               ),
-                              ListView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                itemCount: todaysExpenseList.where((v) {
-                                  var createdDate =
-                                      v.created_at.toDate().dateFormat("yMd");
-                                  var currentDay =
-                                      DateTime.now().dateFormat("yMd");
-                                  return createdDate == currentDay;
-                                }).length,
-                                itemBuilder: (context, index) {
-                                  return Dismissible(
-                                    background: Card(
-                                      color: Colors.red,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: const [
-                                          Icon(
-                                            Icons.delete,
-                                            size: 30,
-                                            color: Colors.white,
-                                          )
-                                        ],
+                              todaysExpenseList.isEmpty
+                                  ? Center(
+                                      child: Text(
+                                        "No Expenses Yet!!",
+                                        style: TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: AppFontSize.fontSize16,
+                                        ),
                                       ),
-                                    ),
-                                    key: UniqueKey(),
-                                    onDismissed: (direction) {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return AlertDialog(
-                                            title: const Text("Confirmation"),
-                                            content: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "Do you want to delete?\nNote: This can't be undone.",
-                                                  textAlign: TextAlign.center,
-                                                  style: TextStyle(
-                                                      fontSize: AppFontSize
-                                                          .fontSize14),
+                                    )
+                                  : ListView.builder(
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      itemCount: todaysExpenseList.where((v) {
+                                        var createdDate = v.created_at
+                                            .toDate()
+                                            .dateFormat("yMd");
+                                        var currentDay =
+                                            DateTime.now().dateFormat("yMd");
+                                        return createdDate == currentDay;
+                                      }).length,
+                                      itemBuilder: (context, index) {
+                                        return Dismissible(
+                                          background: Card(
+                                            color: Colors.red,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.end,
+                                              children: const [
+                                                Icon(
+                                                  Icons.delete,
+                                                  size: 30,
+                                                  color: Colors.white,
                                                 )
                                               ],
                                             ),
-                                            actions: [
-                                              elevatedButton(
-                                                  onPressed: () {
-                                                    FirebaseQueryHelper
-                                                        .deleteDocumentOfCollection(
-                                                            collectionID:
-                                                                "expenses",
-                                                            docID:
-                                                                todaysExpenseList[
-                                                                            index]
-                                                                        .id ??
-                                                                    "-1");
-                                                  },
-                                                  child:
-                                                      const Text("Yes Sure!!")),
-                                              elevatedButton(
-                                                  backgroundColor: Colors.red,
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text("Cancel"))
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Card(
-                                      child: ListTile(
-                                        leading: imageCard(
-                                          categoryName: todaysExpenseList[index]
-                                              .expense_categories,
-                                        ),
-                                        onLongPress: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AddExpenseDialog(
-                                                isEdit: true,
-                                                expenseDataModel:
-                                                    todaysExpenseList[index],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        title: Text(
-                                          todaysExpenseList[index].expense_name,
-                                          style: TextStyle(
-                                            fontSize: AppFontSize.fontSize14,
-                                            fontWeight: FontWeight.w600,
                                           ),
-                                        ),
-                                        subtitle: Text(todaysExpenseList[index]
-                                            .expense_categories),
-                                        trailing: Text(
-                                          "Rs: ${todaysExpenseList[index].amount}",
-                                          style: TextStyle(
-                                            fontSize: AppFontSize.fontSize16,
-                                            color: const Color(0xff3cb980),
-                                            fontWeight: FontWeight.bold,
+                                          key: UniqueKey(),
+                                          onDismissed: (direction) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      "Confirmation"),
+                                                  content: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                        "Do you want to delete?\nNote: This can't be undone.",
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style: TextStyle(
+                                                            fontSize: AppFontSize
+                                                                .fontSize14),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  actions: [
+                                                    elevatedButton(
+                                                        onPressed: () {
+                                                          FirebaseQueryHelper
+                                                              .deleteDocumentOfCollection(
+                                                                  collectionID:
+                                                                      "expenses",
+                                                                  docID: todaysExpenseList[
+                                                                              index]
+                                                                          .id ??
+                                                                      "-1");
+                                                        },
+                                                        child: const Text(
+                                                            "Yes Sure!!")),
+                                                    elevatedButton(
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                            "Cancel"))
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Card(
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 2.h),
+                                            child: ListTile(
+                                              minLeadingWidth: 0,
+                                              minVerticalPadding: 0,
+                                              leading: categoryImageCard(
+                                                categoryName:
+                                                    todaysExpenseList[index]
+                                                        .expense_categories,
+                                              ),
+                                              onLongPress: () {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AddExpenseDialog(
+                                                      isEdit: true,
+                                                      expenseDataModel:
+                                                          todaysExpenseList[
+                                                              index],
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              title: Text(
+                                                todaysExpenseList[index]
+                                                    .expense_name,
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppFontSize.fontSize14,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                              subtitle: Text(
+                                                  todaysExpenseList[index]
+                                                      .expense_categories),
+                                              trailing: Text(
+                                                "Rs: ${todaysExpenseList[index].amount}",
+                                                style: TextStyle(
+                                                  fontSize:
+                                                      AppFontSize.fontSize16,
+                                                  color:
+                                                      const Color(0xff3cb980),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
-                              ),
                             ],
                           );
                         }),
@@ -282,7 +326,7 @@ class DashboardScreen extends StatelessWidget {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton.extended(
+        floatingActionButton: FloatingActionButton(
             onPressed: () async {
               showDialog(
                 context: context,
@@ -291,7 +335,7 @@ class DashboardScreen extends StatelessWidget {
                 },
               );
             },
-            label: const Text("Add New Expense")),
+            child: const Icon(CupertinoIcons.add)),
       ),
     );
   }

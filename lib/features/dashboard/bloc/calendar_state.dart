@@ -7,9 +7,18 @@ class CalendarInitialState extends CalendarState {
   CalendarInitialState();
 }
 
-class CalendarDaySelectedState extends CalendarState {
-  final DateTime selectedDate;
-  CalendarDaySelectedState({
-    required this.selectedDate,
+class CalendarStartDaySelectedState extends CalendarState {
+  final DateTime? startDate;
+  CalendarStartDaySelectedState({
+    this.startDate,
   });
 }
+
+class CalendarEndDaySelectedState extends CalendarState {
+  final DateTime? endDate;
+  CalendarEndDaySelectedState({
+    this.endDate,
+  });
+}
+
+class CalendarDateRangeSelectedState extends CalendarState {}

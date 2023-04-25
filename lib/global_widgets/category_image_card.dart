@@ -1,6 +1,5 @@
 import 'package:expensetracker/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Color getCardColorByCategory(String categoryName) {
   switch (categoryName.toLowerCase()) {
@@ -21,53 +20,54 @@ Color getCardColorByCategory(String categoryName) {
   }
 }
 
-Color getImageColorByCategory(String categoryName) {
+Color? getImageColorByCategory(String categoryName) {
   switch (categoryName.toLowerCase()) {
     case AppString.categoryFood:
-      return Colors.red;
+      return null;
     case AppString.categoryClothing:
-      return Colors.blue;
+      return null;
     case AppString.categoryRent:
-      return Colors.purple;
+      return null;
     case AppString.categoryBike:
-      return Colors.orange;
+      return null;
     case AppString.categoryTransport:
-      return Colors.pink;
+      return null;
     case AppString.categoryUtils:
-      return Colors.blue;
+      return null;
     default:
-      return Colors.green;
+      return null;
   }
 }
 
 String getIconPathByCategory(String categoryName) {
   switch (categoryName.toLowerCase()) {
     case AppString.categoryFood:
-      return "assets/icons/foodExpensesIcon.png";
+      return "assets/icons/food.png";
     case AppString.categoryClothing:
-      return "assets/icons/clothingExpensesIcon.png";
+      return "assets/icons/clothing.png";
     case AppString.categoryRent:
-      return "assets/icons/rentExpensesIcon.png";
+      return "assets/icons/rent.png";
     case AppString.categoryBike:
-      return "assets/icons/bikeServiceExpensesIcon.png";
+      return "assets/icons/bike.png";
     case AppString.categoryTransport:
-      return "assets/icons/transportExpensesIcon.png";
+      return "assets/icons/transport.png";
     case AppString.categoryUtils:
-      return "assets/icons/utilsExpensesIcon.png";
+      return "assets/icons/utils.png";
     default:
-      return "assets/icons/otherExpensesIcon.png";
+      return "assets/icons/bill.png";
   }
 }
 
-Widget imageCard({required String categoryName}) {
+Widget categoryImageCard({required String categoryName}) {
   return Card(
     color: getCardColorByCategory(categoryName),
     margin: EdgeInsets.zero,
-    //"assets/icons/foodExpensesIcon.png",
     child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Image.asset(getIconPathByCategory(categoryName),
-          height: 20.h, color: getImageColorByCategory(categoryName)),
+          fit: BoxFit.contain,
+          // height: 30.h,
+          color: getImageColorByCategory(categoryName)),
     ),
   );
 }

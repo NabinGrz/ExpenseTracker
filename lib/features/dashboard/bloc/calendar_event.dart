@@ -3,9 +3,18 @@ import 'package:flutter/material.dart';
 @immutable
 abstract class CalendarEventMain {}
 
-class CalendarDaySelectedEvent extends CalendarEventMain {
-  final DateTime selectedDay;
-  CalendarDaySelectedEvent({
-    required this.selectedDay,
+class CalendarDateRangeSelectedEvent extends CalendarEventMain {}
+
+class CalendarStartDaySelectedEvent extends CalendarEventMain {
+  final DateTime? startDate;
+  CalendarStartDaySelectedEvent({
+    this.startDate,
+  });
+}
+
+class CalendarEndDaySelectedEvent extends CalendarEventMain {
+  final DateTime? endDate;
+  CalendarEndDaySelectedEvent({
+    this.endDate,
   });
 }

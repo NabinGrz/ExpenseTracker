@@ -1,6 +1,7 @@
 import 'package:expensetracker/global_widgets/expenses_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_styles.dart';
 import '../../../core/utils/firebase_query_handler.dart';
@@ -21,7 +22,7 @@ class ReportScreen extends StatelessWidget {
         length: 4,
         child: BlocConsumer<CalendarBloc, CalendarState>(
           listener: (calendarBloc, state) {
-            if (state is CalendarDaySelectedState) {
+            if (state is CalendarDateRangeSelectedState) {
               todaysExpenseList.clear();
             }
           },
@@ -29,36 +30,98 @@ class ReportScreen extends StatelessWidget {
             return Scaffold(
               appBar: AppBar(
                 elevation: 0,
-                bottom: TabBar(
-                  physics: const NeverScrollableScrollPhysics(),
-                  onTap: (value) async {
-                    await calendarBloc.read<CalendarBloc>().updateExpenses();
-                  },
-                  tabs: const [
-                    Tab(icon: Text("7 Days")),
-                    Tab(icon: Text("14 Days")),
-                    Tab(icon: Text("1 Month")),
-                    Tab(icon: Text("Filter")),
-                  ],
-                ),
+                // bottom: TabBar(
+                //   physics: const NeverScrollableScrollPhysics(),
+                //   onTap: (value) async {
+                //     await calendarBloc.read<CalendarBloc>().updateExpenses();
+                //   },
+                //   tabs: const [
+                //     Tab(icon: Text("7 Days")),
+                //     Tab(icon: Text("14 Days")),
+                //     Tab(icon: Text("1 Month")),
+                //     Tab(icon: Text("Filter")),
+                //   ],
+                // ),
+                //   bottom:   Container(
+                //   height: 45,
+                //   decoration: BoxDecoration(
+                //     color: Colors.grey[300],
+                //     borderRadius: BorderRadius.circular(25.0)
+                //   ),
+                //   child:  TabBar(
+                //     indicator: BoxDecoration(
+                //       color: Colors.green[300],
+                //       borderRadius:  BorderRadius.circular(25.0)
+                //     ) ,
+                //     labelColor: Colors.white,
+                //     unselectedLabelColor: Colors.black,
+                //     tabs: const  [
+                //       Tab(text: 'Chats',),
+                //       Tab(text: 'Status',),
+                //       Tab(text: 'Calls',),
+                //       Tab(text: 'Settings',)
+                //     ],
+                //   ),
+                // ),,
                 title: const Text('Full Expenses'),
               ),
-              body: TabBarView(
-                physics: const NeverScrollableScrollPhysics(),
+              body: Column(
                 children: [
-                  ExpenseListTile(
-                    startDate: DateTime.now().subtract(const Duration(days: 7)),
+                  Container(
+                    height: 45,
+                    margin: EdgeInsets.symmetric(horizontal: 6.w),
+                    // decoration: BoxDecoration(
+                    //     // color: Colors.grey[300],
+                    //     borderRadius: BorderRadius.circular(8.0.r)),
+                    child: TabBar(
+                      indicator: BoxDecoration(
+                          color: const Color(0XFF175C9D),
+                          borderRadius: BorderRadius.circular(8.0.r)),
+                      labelColor: Colors.white,
+                      indicatorSize: TabBarIndicatorSize.tab,
+                      unselectedLabelColor: Colors.grey,
+                      unselectedLabelStyle:
+                          const TextStyle(fontWeight: FontWeight.bold),
+                      labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                      tabs: const [
+                        Tab(
+                          text: '1 Week',
+                        ),
+                        Tab(
+                          text: '2 Week',
+                        ),
+                        Tab(
+                          text: '1 Month',
+                        ),
+                        Tab(
+                          text: 'Filter',
+                        )
+                      ],
+                    ),
                   ),
-                  ExpenseListTile(
-                    startDate:
-                        DateTime.now().subtract(const Duration(days: 14)),
-                  ),
-                  ExpenseListTile(
-                    startDate:
-                        DateTime.now().subtract(const Duration(days: 30)),
-                  ),
-                  ExpenseListTile(
-                    startDate: DateTime.now().add(const Duration(days: 30)),
+                  Expanded(
+                    child: TabBarView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        ExpenseListTile(
+                          startDate:
+                              DateTime.now().subtract(const Duration(days: 7)),
+                        ),
+                        ExpenseListTile(
+                          startDate:
+                              DateTime.now().subtract(const Duration(days: 14)),
+                        ),
+                        ExpenseListTile(
+                          startDate:
+                              DateTime.now().subtract(const Duration(days: 30)),
+                        ),
+                        ExpenseListTile(
+                          isFilterTab: true,
+                          startDate:
+                              DateTime.now().subtract(const Duration(days: 30)),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

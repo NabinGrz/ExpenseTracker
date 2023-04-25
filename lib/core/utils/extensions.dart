@@ -30,3 +30,7 @@ extension IntArithmeticExtensions on List<int> {
 extension DoubleArithmeticExtensions on List<double> {
   double get sumOfDoublesInList => length == 0 ? 0 : reduce((a, b) => a + b);
 }
+
+extension StringCapitialization on String {
+  String get capitialize => this[0].toUpperCase() + substring(1).toLowerCase();
+}
