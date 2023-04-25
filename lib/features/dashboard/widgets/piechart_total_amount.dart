@@ -15,8 +15,8 @@ Widget pieChartTotalAmountWidget(List<ExpenseDataModel> todaysExpenseList,
     children: [
       Center(
         child: CustomShadowContainer(
-          height: 220.h,
-          width: 220.h,
+          height: 250.h,
+          width: 250.h,
           elevation: 100,
           minElevation: 5,
           maxElevation: 10,

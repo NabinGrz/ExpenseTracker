@@ -18,3 +18,10 @@ class CalendarEndDaySelectedEvent extends CalendarEventMain {
     this.endDate,
   });
 }
+
+class TabChangedSelectedEvent extends CalendarEventMain {
+  final int tabIndex;
+  TabChangedSelectedEvent({
+    required this.tabIndex,
+  });
+}

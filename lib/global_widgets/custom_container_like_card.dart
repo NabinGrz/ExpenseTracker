@@ -4,14 +4,14 @@ class CustomShadowContainer extends StatelessWidget {
   final Widget child;
   final double elevation;
   final double height;
-  final double width;
+  final double? width;
   final double minElevation;
   final double maxElevation;
 
   const CustomShadowContainer({
     super.key,
     required this.height,
-    required this.width,
+    this.width,
     required this.child,
     required this.elevation,
     this.minElevation = 0.0,

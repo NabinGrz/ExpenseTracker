@@ -22,3 +22,10 @@ class CalendarEndDaySelectedState extends CalendarState {
 }
 
 class CalendarDateRangeSelectedState extends CalendarState {}
+
+class TabChangedSelectedState extends CalendarState {
+  final int tabIndex;
+  TabChangedSelectedState({
+    required this.tabIndex,
+  });
+}

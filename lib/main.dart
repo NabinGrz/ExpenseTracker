@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_preview/device_preview.dart';
 import 'package:expensetracker/expense_tracker_app.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -15,7 +16,12 @@ void main() async {
   );
   FirebaseAuth.instance;
   FirebaseFirestore.instance;
-  runApp(const MyApp());
+  runApp(DevicePreview(
+    enabled: false,
+    builder: (context) {
+      return const MyApp();
+    },
+  ));
 }
 
 Future<void> initializeFirebase() async {}
@@ -26,6 +32,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      useInheritedMediaQuery: true,
+      locale: DevicePreview.locale(context),
+      builder: DevicePreview.appBuilder,
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(

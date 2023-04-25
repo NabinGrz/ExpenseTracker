@@ -69,7 +69,7 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.analytics),
         title: ("Reports"),
-        activeColorPrimary: CupertinoColors.activeBlue,
+        activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       // PersistentBottomNavBarItem(

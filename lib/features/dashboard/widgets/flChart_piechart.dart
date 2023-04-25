@@ -12,7 +12,7 @@ Widget flChartPieChart(
   var generatedColor = Random().nextInt(Colors.primaries.length);
   Colors.primaries[generatedColor];
   List<PieChartSectionData>? sections = [];
-  List<ExpenseDataModel>? expenses = [];
+
   List<Color> pieColors = [];
   List<String> pieNames = [];
   List<double> totalAmounts = [];

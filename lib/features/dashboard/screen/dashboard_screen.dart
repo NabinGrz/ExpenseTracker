@@ -1,3 +1,4 @@
+import 'package:expensetracker/core/constants/app_colors.dart';
 import 'package:expensetracker/core/constants/app_styles.dart';
 import 'package:expensetracker/core/utils/extensions.dart';
 import 'package:expensetracker/core/utils/firebase_query_handler.dart';
@@ -5,8 +6,8 @@ import 'package:expensetracker/features/dashboard/models/expense_model.dart';
 import 'package:expensetracker/features/dashboard/widgets/card_widget.dart';
 import 'package:expensetracker/global_widgets/category_image_card.dart';
 import 'package:expensetracker/global_widgets/elevated_button.dart';
+import 'package:expensetracker/global_widgets/no_expense_found_widget.dart';
 import 'package:expensetracker/global_widgets/sized_box.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,17 +25,9 @@ class DashboardScreen extends StatelessWidget {
 
   List<ExpenseDataModel> todaysExpenseList = [];
   int totalAmount = 0;
-  // imageToBase64() async {
-  //   File imagefile = File("assets/icons/bike.png"); //convert Path to File
-  //   Uint8List imagebytes = await imagefile.readAsBytes(); //convert to bytes
-  //   String base64string =
-  //       base64.encode(imagebytes); //convert bytes to base64 string
-  //   print(base64string);
-  // }
 
   @override
   Widget build(BuildContext context) {
-    // imageToBase64();
     return BlocProvider(
       create: (context) => CalendarBloc(),
       child: Scaffold(
@@ -154,39 +147,22 @@ class DashboardScreen extends StatelessWidget {
                               sizedBox(
                                 height: 20.h,
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Today's Expense",
-                                    style: TextStyle(
-                                      fontSize: AppFontSize.fontSize18,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  Text(
-                                    "Rs: $totalAmount",
-                                    style: TextStyle(
-                                        fontSize: AppFontSize.fontSize12,
-                                        fontWeight: FontWeight.w300,
-                                        color: Colors.blueGrey),
-                                  ),
-                                ],
+                              Text(
+                                "Top Spending",
+                                style: TextStyle(
+                                  fontSize: AppFontSize.fontSize18,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               sizedBox(
-                                height: 10.h,
-                              ),
+                                  height: 10.h,
+                                  child: Divider(
+                                    height: 2,
+                                    color:
+                                        AppColors.primaryColor.withOpacity(0.3),
+                                  )),
                               todaysExpenseList.isEmpty
-                                  ? Center(
-                                      child: Text(
-                                        "No Expenses Yet!!",
-                                        style: TextStyle(
-                                          color: Colors.grey,
-                                          fontSize: AppFontSize.fontSize16,
-                                        ),
-                                      ),
-                                    )
+                                  ? noExpenseFoundWidget(false)
                                   : ListView.builder(
                                       physics:
                                           const NeverScrollableScrollPhysics(),
@@ -198,15 +174,23 @@ class DashboardScreen extends StatelessWidget {
                                             .dateFormat("yMd");
                                         var currentDay =
                                             DateTime.now().dateFormat("yMd");
-                                        return createdDate == currentDay;
+
+                                        return (createdDate == currentDay &&
+                                            double.parse(v.amount) >= 500);
                                       }).length,
                                       itemBuilder: (context, index) {
+                                        todaysExpenseList.sort((a, b) =>
+                                            double.parse(b.amount).compareTo(
+                                                double.parse(a.amount)));
                                         return Card(
                                           margin: EdgeInsets.symmetric(
                                               vertical: 2.h),
                                           child: ListTile(
                                             minLeadingWidth: 0,
                                             minVerticalPadding: 0,
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    horizontal: 6.w),
                                             leading: categoryImageCard(
                                               categoryName:
                                                   todaysExpenseList[index]
@@ -259,16 +243,6 @@ class DashboardScreen extends StatelessWidget {
             );
           },
         ),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AddExpenseDialog();
-                },
-              );
-            },
-            child: const Icon(CupertinoIcons.add)),
       ),
     );
   }

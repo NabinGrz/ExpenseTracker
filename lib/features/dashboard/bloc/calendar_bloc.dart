@@ -14,6 +14,8 @@ class CalendarBloc extends Bloc<CalendarEventMain, CalendarState> {
         emit(CalendarStartDaySelectedState(startDate: event.startDate)));
     on<CalendarEndDaySelectedEvent>((event, emit) =>
         emit(CalendarEndDaySelectedState(endDate: event.endDate)));
+    on<TabChangedSelectedEvent>((event, emit) =>
+        emit(TabChangedSelectedState(tabIndex: event.tabIndex)));
   }
   updateExpenses() async {
     var data = await FirebaseQueryHelper.getCollectionsAsFuture(

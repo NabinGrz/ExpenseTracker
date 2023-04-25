@@ -16,7 +16,7 @@ Widget noExpenseFoundWidget(bool isFilterTab) {
       Text(
         "No Expenses Found!!",
         style: TextStyle(
-          color: Colors.black,
+          color: Colors.grey,
           fontSize: AppFontSize.fontSize16,
         ),
       ),
