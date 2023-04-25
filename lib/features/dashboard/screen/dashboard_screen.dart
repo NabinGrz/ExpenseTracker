@@ -201,119 +201,49 @@ class DashboardScreen extends StatelessWidget {
                                         return createdDate == currentDay;
                                       }).length,
                                       itemBuilder: (context, index) {
-                                        return Dismissible(
-                                          background: Card(
-                                            color: Colors.red,
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: const [
-                                                Icon(
-                                                  Icons.delete,
-                                                  size: 30,
-                                                  color: Colors.white,
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                          key: UniqueKey(),
-                                          onDismissed: (direction) {
-                                            showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertDialog(
-                                                  title: const Text(
-                                                      "Confirmation"),
-                                                  content: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Text(
-                                                        "Do you want to delete?\nNote: This can't be undone.",
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                        style: TextStyle(
-                                                            fontSize: AppFontSize
-                                                                .fontSize14),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  actions: [
-                                                    elevatedButton(
-                                                        onPressed: () {
-                                                          FirebaseQueryHelper
-                                                              .deleteDocumentOfCollection(
-                                                                  collectionID:
-                                                                      "expenses",
-                                                                  docID: todaysExpenseList[
-                                                                              index]
-                                                                          .id ??
-                                                                      "-1");
-                                                        },
-                                                        child: const Text(
-                                                            "Yes Sure!!")),
-                                                    elevatedButton(
-                                                        backgroundColor:
-                                                            Colors.red,
-                                                        onPressed: () {
-                                                          Navigator.pop(
-                                                              context);
-                                                        },
-                                                        child: const Text(
-                                                            "Cancel"))
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: Card(
-                                            margin: EdgeInsets.symmetric(
-                                                vertical: 2.h),
-                                            child: ListTile(
-                                              minLeadingWidth: 0,
-                                              minVerticalPadding: 0,
-                                              leading: categoryImageCard(
-                                                categoryName:
-                                                    todaysExpenseList[index]
-                                                        .expense_categories,
-                                              ),
-                                              onLongPress: () {
-                                                showDialog(
-                                                  context: context,
-                                                  builder: (context) {
-                                                    return AddExpenseDialog(
-                                                      isEdit: true,
-                                                      expenseDataModel:
-                                                          todaysExpenseList[
-                                                              index],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              title: Text(
-                                                todaysExpenseList[index]
-                                                    .expense_name,
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      AppFontSize.fontSize14,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              subtitle: Text(
+                                        return Card(
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 2.h),
+                                          child: ListTile(
+                                            minLeadingWidth: 0,
+                                            minVerticalPadding: 0,
+                                            leading: categoryImageCard(
+                                              categoryName:
                                                   todaysExpenseList[index]
-                                                      .expense_categories),
-                                              trailing: Text(
-                                                "Rs: ${todaysExpenseList[index].amount}",
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      AppFontSize.fontSize16,
-                                                  color:
-                                                      const Color(0xff3cb980),
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                                      .expense_categories,
+                                            ),
+                                            onLongPress: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AddExpenseDialog(
+                                                    isEdit: true,
+                                                    expenseDataModel:
+                                                        todaysExpenseList[
+                                                            index],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            title: Text(
+                                              todaysExpenseList[index]
+                                                  .expense_name,
+                                              style: TextStyle(
+                                                fontSize:
+                                                    AppFontSize.fontSize14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            subtitle: Text(
+                                                todaysExpenseList[index]
+                                                    .expense_categories),
+                                            trailing: Text(
+                                              "Rs: ${todaysExpenseList[index].amount}",
+                                              style: TextStyle(
+                                                fontSize:
+                                                    AppFontSize.fontSize16,
+                                                color: const Color(0xff3cb980),
+                                                fontWeight: FontWeight.bold,
                                               ),
                                             ),
                                           ),
@@ -340,6 +270,44 @@ class DashboardScreen extends StatelessWidget {
             },
             child: const Icon(CupertinoIcons.add)),
       ),
+    );
+  }
+
+  void onDissmissed({required BuildContext context, required int index}) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Confirmation"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Do you want to delete?\nNote: This can't be undone.",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: AppFontSize.fontSize14),
+              )
+            ],
+          ),
+          actions: [
+            elevatedButton(
+                onPressed: () {
+                  FirebaseQueryHelper.deleteDocumentOfCollection(
+                      collectionID: "expenses",
+                      docID: todaysExpenseList[index].id ?? "-1");
+                  Navigator.pop(context);
+                },
+                child: const Text("Yes Sure!!")),
+            elevatedButton(
+                backgroundColor: Colors.red,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("Cancel"))
+          ],
+        );
+      },
     );
   }
 }

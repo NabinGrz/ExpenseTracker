@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
+import 'core/constants/app_colors.dart';
+
 class ExpenseTrackerApp extends StatefulWidget {
   const ExpenseTrackerApp({super.key});
 
@@ -20,7 +22,10 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
     return PersistentTabView(
       context,
       controller: _controller,
-      screens: [DashboardScreen(), ReportScreen(), DashboardScreen()],
+      screens: [
+        DashboardScreen(),
+        ReportScreen(),
+      ],
       items: _navBarsItems(),
       confineInSafeArea: true,
       backgroundColor: Colors.white, // Default is Colors.white.
@@ -57,8 +62,8 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
     return [
       PersistentBottomNavBarItem(
         icon: const Icon(Icons.dashboard_customize),
-        title: ("DaShboard"),
-        activeColorPrimary: CupertinoColors.activeBlue,
+        title: ("Dashboard"),
+        activeColorPrimary: AppColors.primaryColor,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
       PersistentBottomNavBarItem(
@@ -67,12 +72,12 @@ class _ExpenseTrackerAppState extends State<ExpenseTrackerApp> {
         activeColorPrimary: CupertinoColors.activeBlue,
         inactiveColorPrimary: CupertinoColors.systemGrey,
       ),
-      PersistentBottomNavBarItem(
-        icon: const Icon(Icons.history),
-        title: ("History"),
-        activeColorPrimary: CupertinoColors.activeBlue,
-        inactiveColorPrimary: CupertinoColors.systemGrey,
-      ),
+      // PersistentBottomNavBarItem(
+      //   icon: const Icon(Icons.history),
+      //   title: ("History"),
+      //   activeColorPrimary: CupertinoColors.activeBlue,
+      //   inactiveColorPrimary: CupertinoColors.systemGrey,
+      // ),
     ];
   }
 }

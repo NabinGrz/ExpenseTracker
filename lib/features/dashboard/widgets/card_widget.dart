@@ -27,6 +27,7 @@ class CardWidget extends StatelessWidget {
       required this.cardAmount,
       required this.calendarBloc});
   TextEditingController amountController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -38,6 +39,42 @@ class CardWidget extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.9,
         child: Stack(
           children: [
+            Positioned(
+              top: -50,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.07),
+                    shape: BoxShape.circle),
+                height: 150.h,
+                width: 150.w,
+              ),
+            ),
+            Positioned(
+              bottom: -90,
+              child: Transform.rotate(
+                angle: -math.pi / 4,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.09),
+                      borderRadius: BorderRadius.circular(20)
+                      // shape: BoxShape.circle,
+                      ),
+                  height: 120.h,
+                  width: 150.w,
+                ),
+              ),
+            ),
+            Positioned(
+              right: -40,
+              bottom: -30,
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.09),
+                    shape: BoxShape.circle),
+                height: 90.h,
+                width: 90.w,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               child: Row(
@@ -68,6 +105,7 @@ class CardWidget extends StatelessWidget {
                           IconButton(
                               onPressed: () async {
                                 updateAmountDialog();
+                                // showSnackBar(message: "message");
                               },
                               icon: const Icon(
                                 Icons.edit,
@@ -91,42 +129,6 @@ class CardWidget extends StatelessWidget {
                     height: 30.h,
                   )
                 ],
-              ),
-            ),
-            Positioned(
-              top: -50,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.07),
-                    shape: BoxShape.circle),
-                height: 150.h,
-                width: 150.w,
-              ),
-            ),
-            Positioned(
-              bottom: -90,
-              child: Transform.rotate(
-                angle: -math.pi / 4,
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.09),
-                      borderRadius: BorderRadius.circular(20)
-                      // shape: BoxShape.circle,
-                      ),
-                  height: 120.h,
-                  width: 120.w,
-                ),
-              ),
-            ),
-            Positioned(
-              right: -40,
-              bottom: -30,
-              child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.09),
-                    shape: BoxShape.circle),
-                height: 90.h,
-                width: 90.w,
               ),
             ),
           ],
@@ -175,7 +177,7 @@ class CardWidget extends StatelessWidget {
                     : calendarBloc.read<CalendarBloc>().inBankStream,
                 builder: (context, snapshot) {
                   return elevatedButton(
-                      onPressed: snapshot.data == null || snapshot.data == 0.0
+                      onPressed: snapshot.data == null
                           ? null
                           : () async {
                               var cash = FirebaseQueryHelper.firebaseFireStore

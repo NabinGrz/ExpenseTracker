@@ -1,3 +1,4 @@
+import 'package:expensetracker/core/constants/app_colors.dart';
 import 'package:expensetracker/global_widgets/expenses_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -75,7 +76,7 @@ class ReportScreen extends StatelessWidget {
                     //     borderRadius: BorderRadius.circular(8.0.r)),
                     child: TabBar(
                       indicator: BoxDecoration(
-                          color: const Color(0XFF175C9D),
+                          color: AppColors.primaryColor,
                           borderRadius: BorderRadius.circular(8.0.r)),
                       labelColor: Colors.white,
                       indicatorSize: TabBarIndicatorSize.tab,

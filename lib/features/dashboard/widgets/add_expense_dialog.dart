@@ -143,7 +143,7 @@ class AddExpenseDialog extends StatelessWidget {
                                             data: updatedData);
                                     Navigator.pop(context);
                                   } else {
-                                    var dd = {
+                                    var submitData = {
                                       'expense_categories': selectedSuggestion,
                                       'expense_name':
                                           expenseNameController.text,
@@ -151,10 +151,30 @@ class AddExpenseDialog extends StatelessWidget {
                                       'created_at': DateTime.now().dateFormat(
                                           "yyyy-MM-dd 00:00:00.00000")
                                     };
-                                    dd;
+                                    submitData;
                                     FirebaseQueryHelper.addDocumentToCollection(
-                                        data: dd, collectionID: "expenses");
+                                        data: submitData,
+                                        collectionID: "expenses");
+
+                                    //=========================
+                                    var data = await FirebaseQueryHelper
+                                        .getSingleDocument(
+                                            collectionPath: "total_cash",
+                                            docID: "KND5OKuW1fntgtIOyEvT");
+                                    var amount =
+                                        data?.data() as Map<String, dynamic>;
+                                    double cashAmount = amount['cash_amount'];
+                                    cashAmount;
+                                    var cash = FirebaseQueryHelper
+                                        .firebaseFireStore
+                                        .collection("total_cash")
+                                        .doc("KND5OKuW1fntgtIOyEvT");
+                                    var newAmount = {
+                                      'cash_amount': cashAmount -
+                                          double.parse(amountController.text)
+                                    };
                                     Navigator.pop(context);
+                                    await cash.update(newAmount);
                                   }
                                 },
                           child: Text(isEdit ? "Update" : "Add"));
