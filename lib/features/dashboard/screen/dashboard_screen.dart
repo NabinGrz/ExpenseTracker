@@ -103,11 +103,14 @@ class DashboardScreen extends StatelessWidget {
                                             CrossAxisAlignment.end,
                                         children: [
                                           CardWidget(
+                                              calendarBloc: calendarBloc,
+                                              isTotalCash: true,
                                               cardColor:
                                                   const Color(0xff4a55e2),
                                               cardTitle: "Total Cash",
                                               cardAmount: "${amounts[0]}"),
                                           CardWidget(
+                                            calendarBloc: calendarBloc,
                                             cardColor: const Color(0xffd4756b),
                                             cardTitle: "In Bank",
                                             cardAmount: "${amounts[1]}",

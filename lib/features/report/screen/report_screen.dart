@@ -139,7 +139,7 @@ class ReportScreen extends StatelessWidget {
       },
       builder: (calendarBloc, state) {
         return StreamBuilder(
-            stream: calendarBloc.read<CalendarBloc>().expenseNameListStream,
+            stream: calendarBloc.read<CalendarBloc>().expenseListStream,
             builder: (calendarBloc, snapshot) {
               if (snapshot.data != null) {
                 totalAmount = 0;

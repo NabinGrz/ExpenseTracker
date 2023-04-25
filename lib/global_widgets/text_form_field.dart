@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget textFormField(
     {required Widget icon,
+    Widget? suffixIcon,
     TextInputAction? textInputAction,
     TextInputType? keyboardType,
     String? hintText,
@@ -18,6 +19,7 @@ Widget textFormField(
           color: Colors.grey,
         ),
         prefixIcon: icon,
+        suffixIcon: suffixIcon,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r))),
     onChanged: onChanged,
   );

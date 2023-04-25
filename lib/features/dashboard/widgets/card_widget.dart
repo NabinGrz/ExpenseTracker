@@ -1,20 +1,32 @@
 import 'dart:math' as math;
 
 import 'package:expensetracker/core/constants/app_styles.dart';
+import 'package:expensetracker/core/utils/snackbar.dart';
+import 'package:expensetracker/global_widgets/elevated_button.dart';
 import 'package:expensetracker/global_widgets/sized_box.dart';
+import 'package:expensetracker/global_widgets/text_form_field.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../core/utils/firebase_query_handler.dart';
+import '../bloc/calendar_bloc.dart';
 
 class CardWidget extends StatelessWidget {
   final Color cardColor;
+  final bool isTotalCash;
   final String cardTitle;
   final String cardAmount;
-  const CardWidget(
+  final BuildContext calendarBloc;
+  CardWidget(
       {super.key,
+      this.isTotalCash = false,
       required this.cardColor,
       required this.cardTitle,
-      required this.cardAmount});
-
+      required this.cardAmount,
+      required this.calendarBloc});
+  TextEditingController amountController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -43,13 +55,25 @@ class CardWidget extends StatelessWidget {
                           color: Colors.white,
                         ),
                       ),
-                      Text(
-                        "RS $cardAmount",
-                        style: TextStyle(
-                          fontSize: AppFontSize.fontSize26,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white,
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "RS $cardAmount",
+                            style: TextStyle(
+                              fontSize: AppFontSize.fontSize26,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () async {
+                                updateAmountDialog();
+                              },
+                              icon: const Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                              ))
+                        ],
                       ),
                       sizedBox(height: 50.h),
                       Text(
@@ -108,6 +132,68 @@ class CardWidget extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void updateAmountDialog() {
+    showDialog(
+      context: calendarBloc,
+      builder: (_) {
+        calendarBloc.read<CalendarBloc>().updateTotalCashAmount(
+            double.parse(cardAmount.isEmpty ? "0" : cardAmount));
+        amountController.text = cardAmount;
+        return AlertDialog(
+          title: Text(isTotalCash ? "Update Total Cash" : "Update In Bank"),
+          content: textFormField(
+            controller: amountController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            hintText: "450",
+            icon: const Icon(CupertinoIcons.money_dollar),
+            suffixIcon: InkWell(
+              onTap: () {
+                amountController.clear();
+              },
+              child: Icon(
+                CupertinoIcons.clear,
+                size: 15.h,
+                color: Colors.red,
+              ),
+            ),
+            textInputAction: TextInputAction.done,
+            onChanged: (val) {
+              isTotalCash
+                  ? calendarBloc.read<CalendarBloc>().updateTotalCashAmount(
+                      double.parse(val.isEmpty ? "0" : val))
+                  : calendarBloc.read<CalendarBloc>().updateTotalInBankAmount(
+                      double.parse(val.isEmpty ? "0" : val));
+            },
+          ),
+          actions: [
+            StreamBuilder(
+                stream: isTotalCash
+                    ? calendarBloc.read<CalendarBloc>().totalCashStream
+                    : calendarBloc.read<CalendarBloc>().inBankStream,
+                builder: (context, snapshot) {
+                  return elevatedButton(
+                      onPressed: snapshot.data == null || snapshot.data == 0.0
+                          ? null
+                          : () async {
+                              var cash = FirebaseQueryHelper.firebaseFireStore
+                                  .collection("total_cash")
+                                  .doc("KND5OKuW1fntgtIOyEvT");
+                              var amount = isTotalCash
+                                  ? {'cash_amount': snapshot.data}
+                                  : {'in_bank': snapshot.data};
+                              Navigator.pop(context);
+                              await cash.update(amount);
+
+                              showSnackBar(message: "Successfully Updated!!");
+                            },
+                      child: const Text("Update Now"));
+                })
+          ],
+        );
+      },
     );
   }
 }

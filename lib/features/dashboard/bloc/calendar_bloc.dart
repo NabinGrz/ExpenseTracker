@@ -18,17 +18,37 @@ class CalendarBloc extends Bloc<CalendarEventMain, CalendarState> {
   updateExpenses() async {
     var data = await FirebaseQueryHelper.getCollectionsAsFuture(
         collectionPath: "expenses");
-    _expenseNameList.clear();
+    _expenseList.clear();
     if (data?.docs != null) {
       for (var element in data!.docs) {
-        _expenseNameList.add(ExpenseDataModel.fromJson(element.data()));
+        _expenseList.add(ExpenseDataModel.fromJson(element.data()));
       }
     }
-    _expenseNameListController.add(_expenseNameList);
+    _expenseListController.add(_expenseList);
   }
 
-  final _expenseNameListController = BehaviorSubject<List<ExpenseDataModel>>();
-  final List<ExpenseDataModel> _expenseNameList = [];
-  Stream<List<ExpenseDataModel>> get expenseNameListStream =>
-      _expenseNameListController.stream;
+  final _expenseListController = BehaviorSubject<List<ExpenseDataModel>>();
+  final List<ExpenseDataModel> _expenseList = [];
+  Stream<List<ExpenseDataModel>> get expenseListStream =>
+      _expenseListController.stream;
+
+  final _totalCashController = BehaviorSubject<double>();
+  Stream<double> get totalCashStream => _totalCashController.stream;
+  updateTotalCashAmount(double amount) {
+    _totalCashController.add(amount);
+  }
+
+  final _inBankController = BehaviorSubject<double>();
+  Stream<double> get inBankStream => _inBankController.stream;
+  updateTotalInBankAmount(double amount) {
+    _inBankController.add(amount);
+  }
+
+  @override
+  Future<void> close() {
+    _expenseListController.cast();
+    _totalCashController.close();
+    _inBankController.close();
+    return super.close();
+  }
 }
