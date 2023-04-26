@@ -11,19 +11,8 @@ import 'flChart_piechart.dart';
 Widget pieChartTotalAmountWidget(List<ExpenseDataModel> todaysExpenseList,
     Map<String, List<ExpenseDataModel>> categoryGroupedExpensList) {
   return Stack(
-    fit: StackFit.passthrough,
     children: [
-      Center(
-        child: CustomShadowContainer(
-          height: 250.h,
-          width: 250.h,
-          elevation: 100,
-          minElevation: 5,
-          maxElevation: 10,
-          child: flChartPieChart(
-              categoryGroupedExpensList: categoryGroupedExpensList),
-        ),
-      ),
+      flChartPieChart(categoryGroupedExpensList: categoryGroupedExpensList),
       Center(
         child: CustomShadowContainer(
             height: 75.h,

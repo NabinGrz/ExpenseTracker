@@ -13,7 +13,7 @@ extension StringToDate on String {
 }
 
 extension GroupByExtension<T> on List<T> {
-  Map<K, List<T>> groupByE<K>(K Function(T) keySelector) {
+  Map<K, List<T>> groupBy<K>(K Function(T) keySelector) {
     final groups = <K, List<T>>{};
     for (final element in this) {
       final key = keySelector(element);

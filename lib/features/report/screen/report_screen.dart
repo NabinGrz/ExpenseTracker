@@ -1,6 +1,7 @@
 import 'package:expensetracker/core/constants/app_colors.dart';
 import 'package:expensetracker/features/dashboard/bloc/calendar_event.dart';
 import 'package:expensetracker/global_widgets/expenses_list.dart';
+import 'package:expensetracker/global_widgets/sized_box.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,8 +40,9 @@ class ReportScreen extends StatelessWidget {
               ),
               body: Column(
                 children: [
+                  sizedBox(height: 2.h),
                   Container(
-                    height: 45,
+                    height: 40.h,
                     margin: EdgeInsets.symmetric(horizontal: 6.w),
                     // decoration: BoxDecoration(
                     //     // color: Colors.grey[300],
@@ -88,9 +90,8 @@ class ReportScreen extends StatelessWidget {
                               DateTime.now().subtract(const Duration(days: 1)),
                         ),
                         ExpenseListTile(
-                          startDate:
-                              DateTime.now().subtract(const Duration(days: 7)),
-                        ),
+                            startDate: DateTime.now()
+                                .subtract(const Duration(days: 7))),
                         ExpenseListTile(
                           startDate:
                               DateTime.now().subtract(const Duration(days: 14)),

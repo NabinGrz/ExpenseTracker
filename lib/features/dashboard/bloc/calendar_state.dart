@@ -8,16 +8,16 @@ class CalendarInitialState extends CalendarState {
 }
 
 class CalendarStartDaySelectedState extends CalendarState {
-  final DateTime? startDate;
+  final DateTime startDate;
   CalendarStartDaySelectedState({
-    this.startDate,
+    required this.startDate,
   });
 }
 
 class CalendarEndDaySelectedState extends CalendarState {
-  final DateTime? endDate;
+  final DateTime endDate;
   CalendarEndDaySelectedState({
-    this.endDate,
+    required this.endDate,
   });
 }
 

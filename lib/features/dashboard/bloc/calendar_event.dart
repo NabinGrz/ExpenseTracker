@@ -6,16 +6,16 @@ abstract class CalendarEventMain {}
 class CalendarDateRangeSelectedEvent extends CalendarEventMain {}
 
 class CalendarStartDaySelectedEvent extends CalendarEventMain {
-  final DateTime? startDate;
+  final DateTime startDate;
   CalendarStartDaySelectedEvent({
-    this.startDate,
+    required this.startDate,
   });
 }
 
 class CalendarEndDaySelectedEvent extends CalendarEventMain {
-  final DateTime? endDate;
+  final DateTime endDate;
   CalendarEndDaySelectedEvent({
-    this.endDate,
+    required this.endDate,
   });
 }
 

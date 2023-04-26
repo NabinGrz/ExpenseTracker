@@ -69,6 +69,17 @@ class AddExpenseDialog extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                textFormField(
+                  hintText: "Dairy Milk",
+                  icon: const Icon(Icons.wallet),
+                  controller: expenseNameController,
+                  onChanged: (value) {
+                    addExpenseBloc
+                        .read<AddExpenseBloc>()
+                        .updateExpenseName(value);
+                  },
+                ),
+                sizedBox(height: 4),
                 ExpenseDropDown(
                   categoriesController: isEdit ? categoriesController : null,
                   onSuggestionSelected: (suggestion) {
@@ -91,17 +102,6 @@ class AddExpenseDialog extends StatelessWidget {
                     } else {
                       // categoriesController.text = val;
                     }
-                  },
-                ),
-                sizedBox(height: 4),
-                textFormField(
-                  hintText: "Dairy Milk",
-                  icon: const Icon(Icons.wallet),
-                  controller: expenseNameController,
-                  onChanged: (value) {
-                    addExpenseBloc
-                        .read<AddExpenseBloc>()
-                        .updateExpenseName(value);
                   },
                 ),
                 sizedBox(height: 4),

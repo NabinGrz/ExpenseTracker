@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'core/constants/app_colors.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -38,8 +39,30 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
-        useMaterial3: true,
-        textTheme: GoogleFonts.poppinsTextTheme(),
+        tabBarTheme: const TabBarTheme(indicatorColor: Colors.red),
+        // useMaterial3: true,
+        textTheme: GoogleFonts.poppinsTextTheme(ThemeData.light()
+            .textTheme
+            .copyWith(
+              displayLarge:
+                  const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              displayMedium:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              displaySmall: const TextStyle(fontSize: 16),
+              titleMedium: const TextStyle(fontSize: 12), //MEDIUM TEXT
+              bodySmall: const TextStyle(fontSize: 14),
+              headlineSmall: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.primaryColor),
+              headlineMedium:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              labelLarge: const TextStyle(
+                  fontSize: 14,
+                  letterSpacing: 0.5,
+                  fontWeight: FontWeight.w500),
+              bodyLarge: const TextStyle(fontSize: 10), //MESSAGE
+            )),
         primarySwatch: const MaterialColor(0XFF175C9D, <int, Color>{
           50: Color(0XFF175C9D),
           100: Color(0XFF175C9D),

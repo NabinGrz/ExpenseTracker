@@ -1,29 +1,24 @@
-import 'package:expensetracker/core/constants/app_colors.dart';
 import 'package:expensetracker/core/constants/app_styles.dart';
 import 'package:expensetracker/core/utils/extensions.dart';
 import 'package:expensetracker/core/utils/firebase_query_handler.dart';
 import 'package:expensetracker/features/dashboard/models/expense_model.dart';
 import 'package:expensetracker/features/dashboard/widgets/card_widget.dart';
-import 'package:expensetracker/global_widgets/category_image_card.dart';
 import 'package:expensetracker/global_widgets/elevated_button.dart';
-import 'package:expensetracker/global_widgets/no_expense_found_widget.dart';
 import 'package:expensetracker/global_widgets/sized_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/constants/app_colors.dart';
+import '../../../global_widgets/category_image_card.dart';
+import '../../../global_widgets/no_expense_found_widget.dart';
 import '../bloc/calendar_bloc.dart';
 import '../bloc/calendar_state.dart';
 import '../widgets/add_expense_dialog.dart';
 
 class DashboardScreen extends StatelessWidget {
   DashboardScreen({super.key});
-
-  final DateTime _selectedDay = DateTime.now();
-
-  final DateTime _focusedDay = DateTime.now();
-
-  List<ExpenseDataModel> todaysExpenseList = [];
+  List<ExpenseDataModel> todaysTopSpendingList = [];
   int totalAmount = 0;
 
   @override
@@ -125,117 +120,33 @@ class DashboardScreen extends StatelessWidget {
                             collectionPath: "expenses"),
                         builder: (calendarBloc, snapshot) {
                           if (snapshot.data != null) {
-                            totalAmount = 0;
-                            todaysExpenseList.clear();
-                            for (var element in snapshot.data!.docs) {
-                              Map<String, dynamic> finalData = {
-                                ...element.data(),
-                                'id': element.id
-                              };
-                              var exp = ExpenseDataModel.fromJson(finalData);
-                              if (exp.created_at.toDate().dateFormat("yMd") ==
-                                  DateTime.now().dateFormat("yMd")) {
-                                todaysExpenseList.add(exp);
-                                totalAmount =
-                                    totalAmount + int.parse(exp.amount);
-                              }
-                            }
+                            getTodaysTopSpendingsAndGroup(snapshot.data);
                           }
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              sizedBox(
-                                height: 20.h,
-                              ),
-                              Text(
-                                "Top Spending",
-                                style: TextStyle(
-                                  fontSize: AppFontSize.fontSize18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              sizedBox(
-                                  height: 10.h,
-                                  child: Divider(
-                                    height: 2,
-                                    color:
-                                        AppColors.primaryColor.withOpacity(0.3),
-                                  )),
-                              todaysExpenseList.isEmpty
-                                  ? noExpenseFoundWidget(false)
-                                  : ListView.builder(
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      itemCount: todaysExpenseList.where((v) {
-                                        var createdDate = v.created_at
-                                            .toDate()
-                                            .dateFormat("yMd");
-                                        var currentDay =
-                                            DateTime.now().dateFormat("yMd");
-
-                                        return (createdDate == currentDay &&
-                                            double.parse(v.amount) >= 500);
-                                      }).length,
-                                      itemBuilder: (context, index) {
-                                        todaysExpenseList.sort((a, b) =>
-                                            double.parse(b.amount).compareTo(
-                                                double.parse(a.amount)));
-                                        return Card(
-                                          margin: EdgeInsets.symmetric(
-                                              vertical: 2.h),
-                                          child: ListTile(
-                                            minLeadingWidth: 0,
-                                            minVerticalPadding: 0,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    horizontal: 6.w),
-                                            leading: categoryImageCard(
-                                              categoryName:
-                                                  todaysExpenseList[index]
-                                                      .expense_categories,
-                                            ),
-                                            onLongPress: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AddExpenseDialog(
-                                                    isEdit: true,
-                                                    expenseDataModel:
-                                                        todaysExpenseList[
-                                                            index],
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            title: Text(
-                                              todaysExpenseList[index]
-                                                  .expense_name,
-                                              style: TextStyle(
-                                                fontSize:
-                                                    AppFontSize.fontSize14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            subtitle: Text(
-                                                todaysExpenseList[index]
-                                                    .expense_categories),
-                                            trailing: Text(
-                                              "Rs: ${todaysExpenseList[index].amount}",
-                                              style: TextStyle(
-                                                fontSize:
-                                                    AppFontSize.fontSize16,
-                                                color: const Color(0xff3cb980),
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
+                          return todaysTopSpendingList.isEmpty
+                              ? noExpenseFoundWidget(false)
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    sizedBox(
+                                      height: 20.h,
                                     ),
-                            ],
-                          );
+                                    Text("Top Spending's Today",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displayMedium
+                                            ?.copyWith(
+                                              fontSize: AppFontSize.fontSize20,
+                                              // color: AppColors.primaryColor,
+                                            )),
+                                    sizedBox(
+                                      height: 8.h,
+                                    ),
+                                    listViewWidgetOfTopSpendings(),
+                                    sizedBox(
+                                      height: 10.h,
+                                    ),
+                                  ],
+                                );
                         }),
                   ),
                 ),
@@ -245,6 +156,21 @@ class DashboardScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void getTodaysTopSpendingsAndGroup(data) {
+    totalAmount = 0;
+    todaysTopSpendingList.clear();
+    for (var element in data!.docs) {
+      Map<String, dynamic> finalData = {...element.data(), 'id': element.id};
+      var exp = ExpenseDataModel.fromJson(finalData);
+      if (exp.created_at.toDate().dateFormat("yMd") ==
+              DateTime.now().dateFormat("yMd") &&
+          double.parse(exp.amount) >= 500) {
+        todaysTopSpendingList.add(exp);
+        totalAmount = totalAmount + int.parse(exp.amount);
+      }
+    }
   }
 
   void onDissmissed({required BuildContext context, required int index}) {
@@ -269,7 +195,7 @@ class DashboardScreen extends StatelessWidget {
                 onPressed: () {
                   FirebaseQueryHelper.deleteDocumentOfCollection(
                       collectionID: "expenses",
-                      docID: todaysExpenseList[index].id ?? "-1");
+                      docID: todaysTopSpendingList[index].id ?? "-1");
                   Navigator.pop(context);
                 },
                 child: const Text("Yes Sure!!")),
@@ -280,6 +206,115 @@ class DashboardScreen extends StatelessWidget {
                 },
                 child: const Text("Cancel"))
           ],
+        );
+      },
+    );
+  }
+
+  Widget listViewWidgetOfTopSpendings() {
+    List<ExpenseDataModel> filteredTodaysTopSpendingsList =
+        todaysTopSpendingList.where((v) {
+      var createdDate = v.created_at.toDate().dateFormat("yMd");
+      var currentDay = DateTime.now().dateFormat("yMd");
+
+      return (createdDate == currentDay && double.parse(v.amount) >= 500);
+    }).toList();
+    Map<String, List<ExpenseDataModel>> groupedTopExpenses =
+        filteredTodaysTopSpendingsList.groupBy((val) => val.expense_categories);
+
+    return ListView.separated(
+      separatorBuilder: (context, index) {
+        return sizedBox(height: 4.h);
+      },
+      physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      itemCount: groupedTopExpenses.length,
+      itemBuilder: (context, index) {
+        final expenseCategoryName =
+            groupedTopExpenses.keys.map((e) => e).toList();
+        final expensesList = groupedTopExpenses.values.map((e) => e).toList();
+        expensesList[index].sort(
+            (a, b) => double.parse(b.amount).compareTo(double.parse(a.amount)));
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6.r),
+              border: Border.all(
+                width: 2.w,
+                color: AppColors.primaryColor.withOpacity(0.1),
+              )),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    expenseCategoryName[index].toString(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayMedium
+                        ?.copyWith(color: AppColors.primaryColor),
+                  ),
+                  Text(
+                    "-Rs: ${expensesList[index].map((e) => double.parse(e.amount)).toList().sumOfDoublesInList}",
+                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                          color: AppColors.primaryColor,
+                        ),
+                  ),
+                ],
+              ),
+              sizedBox(height: 4.h),
+              Divider(
+                height: 8.h,
+                thickness: 1.5.h,
+                color: AppColors.primaryColor.withOpacity(0.1),
+              ),
+              Wrap(
+                spacing: 0,
+                children: expensesList[index]
+                    .map((val) => ListTile(
+                          minLeadingWidth: 0,
+                          minVerticalPadding: 0,
+                          contentPadding: EdgeInsets.zero,
+                          leading: categoryImageCard(
+                            categoryName: val.expense_categories,
+                          ),
+                          onLongPress: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AddExpenseDialog(
+                                  isEdit: true,
+                                  expenseDataModel: val,
+                                );
+                              },
+                            );
+                          },
+                          title: Text(val.expense_name,
+                              style: Theme.of(context).textTheme.displaySmall),
+                          subtitle: Text(val.expense_categories,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                    color: Colors.grey,
+                                  )),
+                          trailing: Text(
+                            "Rs: ${val.amount}",
+                            style: TextStyle(
+                              fontSize: AppFontSize.fontSize16,
+                              color: const Color(0xff3cb980),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ))
+                    .toList(),
+              )
+            ],
+          ),
         );
       },
     );

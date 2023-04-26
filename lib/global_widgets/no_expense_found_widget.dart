@@ -6,7 +6,7 @@ import '../core/constants/app_styles.dart';
 Widget noExpenseFoundWidget(bool isFilterTab) {
   return Center(
       child: Column(
-    mainAxisAlignment: MainAxisAlignment.end,
+    mainAxisAlignment: MainAxisAlignment.start,
     children: [
       Image.asset(
         "assets/icons/expense.png",
