@@ -13,6 +13,7 @@ import '../core/utils/firebase_query_handler.dart';
 import '../features/dashboard/bloc/calendar_bloc.dart';
 import '../features/dashboard/bloc/calendar_state.dart';
 import '../features/dashboard/models/expense_model.dart';
+import '../features/dashboard/widgets/add_expense_dialog.dart';
 import '../features/dashboard/widgets/piechart_total_amount.dart';
 import 'no_expense_found_widget.dart';
 
@@ -33,7 +34,6 @@ class ExpenseListTile extends StatelessWidget {
   }
 
   Widget expensesListWidget() {
-    print(startDate);
     return BlocProvider(
       create: (context) => CalendarBloc(),
       child: BlocConsumer<CalendarBloc, CalendarState>(
@@ -96,8 +96,8 @@ class ExpenseListTile extends StatelessWidget {
                           child: TabBarView(
                             physics: const NeverScrollableScrollPhysics(),
                             children: [
-                              expenseTabView(
-                                  todaysExpenseList, categoryGroupedExpensList),
+                              expenseTabView(todaysExpenseList,
+                                  categoryGroupedExpensList, calendarBloc),
                               analyticsTabView(todaysExpenseList,
                                   categoryGroupedExpensList, calendarBloc),
                             ],
@@ -122,6 +122,17 @@ class ExpenseListTile extends StatelessWidget {
         return Card(
           margin: const EdgeInsets.all(2),
           child: ListTile(
+            onLongPress: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AddExpenseDialog(
+                    isEdit: true,
+                    expenseDataModel: todaysExpenseList[index],
+                  );
+                },
+              );
+            },
             minLeadingWidth: 0,
             minVerticalPadding: 0,
             contentPadding: EdgeInsets.symmetric(horizontal: 6.w),
@@ -202,12 +213,18 @@ class ExpenseListTile extends StatelessWidget {
     );
   }
 
-  Widget expenseTabView(List<ExpenseDataModel> todaysExpenseList,
-      Map<String, List<ExpenseDataModel>> categoryGroupedExpensList) {
+  Widget expenseTabView(
+    List<ExpenseDataModel> todaysExpenseList,
+    Map<String, List<ExpenseDataModel>> categoryGroupedExpensList,
+    BuildContext context,
+  ) {
     return todaysExpenseList.isEmpty
         ? noExpenseFoundWidget(isFilterTab)
         : pieChartTotalAmountWidget(
-            todaysExpenseList, categoryGroupedExpensList);
+            todaysExpenseList,
+            context,
+            categoryGroupedExpensList,
+          );
   }
 
   Widget analyticsTabView(
@@ -236,10 +253,9 @@ class ExpenseListTile extends StatelessWidget {
     for (var element in snapshot.data!.docs) {
       Map<String, dynamic> finalData = {...element.data(), 'id': element.id};
       ExpenseDataModel exp = ExpenseDataModel.fromJson(finalData);
-      DateTime createdDate = exp.created_at
-          .toDate()
-          .dateFormat("yyyy-MM-dd HH:mm:ss.00000")
-          .toDate();
+
+      DateTime createdDate = DateTime(exp.created_at.toDate().year,
+          exp.created_at.toDate().month, exp.created_at.toDate().day);
       DateTime newStartDate =
           DateTime(startDate.year, startDate.month, startDate.day);
       bool isAfter = createdDate.isAfter(newStartDate);

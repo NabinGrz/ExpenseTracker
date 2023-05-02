@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,7 +20,16 @@ Widget textFormField(
           color: Colors.grey,
         ),
         prefixIcon: icon,
-        suffixIcon: suffixIcon,
+        suffixIcon: InkWell(
+          onTap: () {
+            controller?.clear();
+          },
+          child: Icon(
+            CupertinoIcons.clear,
+            size: 15.h,
+            color: Colors.red,
+          ),
+        ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r))),
     onChanged: onChanged,
   );

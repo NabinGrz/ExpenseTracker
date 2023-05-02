@@ -110,9 +110,8 @@ class ReportScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              floatingActionButton: tabIndex != 0
-                  ? null
-                  : FloatingActionButton(
+              floatingActionButton: tabIndex == 0
+                  ? FloatingActionButton(
                       onPressed: () async {
                         showDialog(
                           context: context,
@@ -122,7 +121,8 @@ class ReportScreen extends StatelessWidget {
                         );
                       },
                       child: const Icon(CupertinoIcons.add),
-                    ),
+                    )
+                  : null,
             );
           },
         ),

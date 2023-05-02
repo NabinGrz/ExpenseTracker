@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -32,6 +33,20 @@ class _ExpenseDropDownState extends State<ExpenseDropDown> {
                 OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
             hintStyle: const TextStyle(
               color: Colors.grey,
+            ),
+            suffixIcon: InkWell(
+              onTap: () {
+                if (widget.categoriesController == null) {
+                  categoriesController.clear();
+                } else {
+                  widget.categoriesController?.clear();
+                }
+              },
+              child: Icon(
+                CupertinoIcons.clear,
+                size: 15.h,
+                color: Colors.red,
+              ),
             ),
             hintText: "Select Categories"),
       ),

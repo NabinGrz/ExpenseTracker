@@ -133,7 +133,10 @@ class AddExpenseDialog extends StatelessWidget {
                                       'expense_name':
                                           expenseNameController.text,
                                       'amount': amountController.text,
-                                      'created_at': DateTime.now().toString()
+                                      'created_at': expenseDataModel?.created_at
+                                          .toDate()
+                                          .dateFormat(
+                                              "yyyy-MM-dd HH:mm:ss.00000")
                                     };
                                     updatedData;
                                     FirebaseQueryHelper
