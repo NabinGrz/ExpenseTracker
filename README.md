@@ -2,7 +2,7 @@
 
 ## Flutter Project
 
-This is a Simple Expense Tracker app developed(For Personal Use Only) using Bloc Pattern & Firebase for practicing.
+This is a Simple 2 Page Expense Tracker app developed(For Personal Use Only) using Bloc Pattern & Firebase(FIRESTORE DATABASE) for practicing.
 
 ## Dependencies:
 - [flutter_bloc](https://pub.dev/packages/flutter_bloc)
