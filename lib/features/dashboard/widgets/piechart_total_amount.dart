@@ -38,7 +38,7 @@ Widget pieChartTotalAmountWidget(
                 )),
           ],
         ),
-        flChartBarChart(
+        expenseCategoryCard(
             categoryGroupedExpensList: categoryGroupedExpensList,
             context: context),
       ],

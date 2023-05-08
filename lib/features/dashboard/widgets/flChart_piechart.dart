@@ -35,8 +35,6 @@ Widget flChartPieChart(
           ?.map((e) => double.parse(e.amount))
           .toList()
           .sumOfDoublesInList,
-      // title:
-      // "${pieNames[i].capitialize}\n${categoryGroupedExpensList[pieNames[i]]?.map((e) => double.parse(e.amount)).toList().sumOfDoublesInList}",
       color: Colors.primaries[i],
       radius: 100,
       titleStyle: TextStyle(
@@ -48,13 +46,12 @@ Widget flChartPieChart(
   return PieChart(PieChartData(centerSpaceRadius: 30, sections: sections));
 }
 
-Widget flChartBarChart(
+Widget expenseCategoryCard(
     {required Map<String, List<ExpenseDataModel>> categoryGroupedExpensList,
     required BuildContext context}) {
-  var generatedColor = Random().nextInt(Colors.primaries.length);
+  var generatedColor = Random().nextInt(17);
   Colors.primaries[generatedColor];
-  List<Widget>? sections = [];
-
+  List<Widget>? widgets = [];
   List<Color> pieColors = [];
   List<String> pieNames = [];
   List<double> totalAmounts = [];
@@ -66,27 +63,51 @@ Widget flChartBarChart(
   }
 
   for (int i = 0; i < categoryGroupedExpensList.length; i++) {
-    pieColors.add(Colors.primaries[i]);
-    var pieTitles = categoryGroupedExpensList[pieNames[i]];
-    var height = categoryGroupedExpensList[pieNames[i]]
-        ?.map((e) => double.parse(e.amount))
-        .toList()
-        .sumOfDoublesInList;
-    var width = (MediaQuery.of(context).size.width *
-        0.75 /
-        categoryGroupedExpensList.length);
-    sections.add(Container(
+    categoryGroupedExpensList[pieNames[i]]?.sort(
+      (a, b) => double.parse(b.amount).compareTo(double.parse(a.amount)),
+    );
+    var randomNumber = Random().nextInt(17);
+    pieColors.add(Colors.primaries[randomNumber]);
+
+    widgets.add(
+        expenseCategoryWidget(context, categoryGroupedExpensList, pieNames, i));
+  }
+
+  return Wrap(
+    crossAxisAlignment: WrapCrossAlignment.center,
+    children: widgets,
+  );
+}
+
+Widget expenseCategoryWidget(
+    BuildContext context,
+    Map<String, List<ExpenseDataModel>> categoryGroupedExpensList,
+    List<String> pieNames,
+    int i) {
+  var ranNum = Random().nextInt(17);
+  return InkWell(
+    onTap: () {
+      showModalBottomSheet(
+        context: context,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.r),
+                topRight: Radius.circular(16.r))),
+        builder: (_) {
+          return expenseBottomSheet(
+              context, categoryGroupedExpensList[pieNames[i]]);
+        },
+      );
+    },
+    child: Container(
       margin: EdgeInsets.symmetric(
         horizontal: 4.w,
         vertical: 4.h,
       ),
-      // width: width,
-      // height: 55.h,
-      // width: 55.w,
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-          color: Colors.primaries[i], borderRadius: BorderRadius.circular(8.r)),
-      // alignment: Alignment.bottomCenter,
+          color: Colors.primaries[ranNum],
+          borderRadius: BorderRadius.circular(8.r)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -104,34 +125,56 @@ Widget flChartBarChart(
                 ),
               )),
           Text(
-            pieNames[i],
+            pieNames[i].toUpperCase(),
             style: const TextStyle(
               color: Colors.white,
             ),
           )
         ],
       ),
-      // child: ,
-    ));
-    // sections.add(PieChartSectionData(
-    //   value: categoryGroupedExpensList[pieNames[i]]
-    //       ?.map((e) => double.parse(e.amount))
-    //       .toList()
-    //       .sumOfDoublesInList,
-    //   // title:
-    //   // "${pieNames[i].capitialize}\n${categoryGroupedExpensList[pieNames[i]]?.map((e) => double.parse(e.amount)).toList().sumOfDoublesInList}",
-    //   color: Colors.primaries[i],
-    //   radius: 100,
-    //   titleStyle: TextStyle(
-    //       fontSize: AppFontSize.fontSize12,
-    //       fontWeight: FontWeight.bold,
-    //       color: const Color(0xffffffff)),
-    // ));
-  }
-  // return PieChart(PieChartData(centerSpaceRadius: 30, sections: sections));
-  return Wrap(
-    crossAxisAlignment: WrapCrossAlignment.center,
-    // mainAxisAlignment: MainAxisAlignment.start,
-    children: sections,
+    ),
+  );
+}
+
+Widget expenseBottomSheet(
+    BuildContext context, List<ExpenseDataModel>? categoryGroupedExpensList) {
+  return SingleChildScrollView(
+    padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 14.w),
+    child: Column(
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "All Expenses",
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: AppFontSize.fontSize16),
+        ),
+        Text(
+          "${categoryGroupedExpensList?.length} items",
+          style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+              fontSize: AppFontSize.fontSize14),
+        ),
+        Scrollbar(
+          child: ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: categoryGroupedExpensList?.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+                title: Text(
+                    "${categoryGroupedExpensList?[index].expense_name.capitialize}"),
+                subtitle:
+                    Text("Rs ${categoryGroupedExpensList?[index].amount}"),
+              );
+              // return Text("${categoryGroupedExpensList?[index].expense_name}");
+            },
+          ),
+        )
+      ],
+    ),
   );
 }

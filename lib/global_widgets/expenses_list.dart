@@ -83,10 +83,10 @@ class ExpenseListTile extends StatelessWidget {
                                   const TextStyle(fontWeight: FontWeight.bold),
                               tabs: const [
                                 Tab(
-                                  text: 'Expenses',
+                                  text: 'Analytics',
                                 ),
                                 Tab(
-                                  text: 'Analytics',
+                                  text: 'Expenses',
                                 ),
                               ],
                             ),
@@ -232,6 +232,7 @@ class ExpenseListTile extends StatelessWidget {
       Map<String, List<ExpenseDataModel>> categoryGroupedExpensList,
       BuildContext calendarBloc) {
     return SingleChildScrollView(
+      controller: controller,
       child: Column(
         children: [
           if (isFilterTab) filterWidget(context: calendarBloc),

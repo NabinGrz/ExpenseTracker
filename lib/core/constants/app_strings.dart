@@ -11,4 +11,9 @@ class AppString {
   static const String categoryMilk = "milk";
   static const String categoryWater = "water";
   static const String categoryGrocery = "grocery";
+  static const String categoryChocolate = "chocolate";
+  static const String categoryMeat = "meat";
+  static const String categoryStationary = "stationary";
+  static const String categoryFruits = "fruits";
+  static const String categoryCosmetic = "cosmetic";
 }
