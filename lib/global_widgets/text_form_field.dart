@@ -2,14 +2,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Widget textFormField(
-    {required Widget icon,
-    Widget? suffixIcon,
-    TextInputAction? textInputAction,
-    TextInputType? keyboardType,
-    String? hintText,
-    TextEditingController? controller,
-    required Function(String) onChanged}) {
+Widget textFormField({
+  required Widget icon,
+  Widget? suffixIcon,
+  TextInputAction? textInputAction,
+  TextInputType? keyboardType,
+  String? hintText,
+  TextEditingController? controller,
+  required Function(String) onChanged,
+  void Function()? onClear,
+}) {
   return TextFormField(
     textInputAction: textInputAction ?? TextInputAction.next,
     keyboardType: keyboardType ?? TextInputType.name,
@@ -21,9 +23,10 @@ Widget textFormField(
         ),
         prefixIcon: icon,
         suffixIcon: InkWell(
-          onTap: () {
-            controller?.clear();
-          },
+          onTap: onClear ??
+              () {
+                controller?.clear();
+              },
           child: Icon(
             CupertinoIcons.clear,
             size: 15.h,

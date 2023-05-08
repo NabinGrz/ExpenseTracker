@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/utils/firebase_query_handler.dart';
-import '../bloc/calendar_bloc.dart';
+import '../bloc/expense_bloc.dart';
 
 class CardWidget extends StatelessWidget {
   final Color cardColor;
@@ -141,7 +141,7 @@ class CardWidget extends StatelessWidget {
     showDialog(
       context: calendarBloc,
       builder: (_) {
-        calendarBloc.read<CalendarBloc>().updateTotalCashAmount(
+        calendarBloc.read<ExpenseBloc>().updateTotalCashAmount(
             double.parse(cardAmount.isEmpty ? "0" : cardAmount));
         amountController.text = cardAmount;
         return AlertDialog(
@@ -164,17 +164,17 @@ class CardWidget extends StatelessWidget {
             textInputAction: TextInputAction.done,
             onChanged: (val) {
               isTotalCash
-                  ? calendarBloc.read<CalendarBloc>().updateTotalCashAmount(
+                  ? calendarBloc.read<ExpenseBloc>().updateTotalCashAmount(
                       double.parse(val.isEmpty ? "0" : val))
-                  : calendarBloc.read<CalendarBloc>().updateTotalInBankAmount(
+                  : calendarBloc.read<ExpenseBloc>().updateTotalInBankAmount(
                       double.parse(val.isEmpty ? "0" : val));
             },
           ),
           actions: [
             StreamBuilder(
                 stream: isTotalCash
-                    ? calendarBloc.read<CalendarBloc>().totalCashStream
-                    : calendarBloc.read<CalendarBloc>().inBankStream,
+                    ? calendarBloc.read<ExpenseBloc>().totalCashStream
+                    : calendarBloc.read<ExpenseBloc>().inBankStream,
                 builder: (context, snapshot) {
                   return elevatedButton(
                       onPressed: snapshot.data == null

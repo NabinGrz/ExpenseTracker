@@ -1,17 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expensetracker/core/constants/app_colors.dart';
+import 'package:expensetracker/core/utils/clear_focus.dart';
 import 'package:expensetracker/core/utils/extensions.dart';
-import 'package:expensetracker/features/dashboard/bloc/calendar_event.dart';
+import 'package:expensetracker/features/dashboard/bloc/expense_event.dart';
 import 'package:expensetracker/global_widgets/category_image_card.dart';
 import 'package:expensetracker/global_widgets/sized_box.dart';
+import 'package:expensetracker/global_widgets/text_form_field.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../core/constants/app_styles.dart';
 import '../core/utils/firebase_query_handler.dart';
-import '../features/dashboard/bloc/calendar_bloc.dart';
-import '../features/dashboard/bloc/calendar_state.dart';
+import '../features/dashboard/bloc/expense_bloc.dart';
+import '../features/dashboard/bloc/expense_state.dart';
 import '../features/dashboard/models/expense_model.dart';
 import '../features/dashboard/widgets/add_expense_dialog.dart';
 import '../features/dashboard/widgets/piechart_total_amount.dart';
@@ -19,6 +22,7 @@ import 'no_expense_found_widget.dart';
 
 class ExpenseListTile extends StatelessWidget {
   DateTime startDate;
+  TextEditingController searchController = TextEditingController();
   final bool isFilterTab;
   ExpenseListTile(
       {super.key, required this.startDate, this.isFilterTab = false});
@@ -35,14 +39,14 @@ class ExpenseListTile extends StatelessWidget {
 
   Widget expensesListWidget() {
     return BlocProvider(
-      create: (context) => CalendarBloc(),
-      child: BlocConsumer<CalendarBloc, CalendarState>(
+      create: (context) => ExpenseBloc(),
+      child: BlocConsumer<ExpenseBloc, ExpenseState>(
         listener: (calendarBloc, state) {
-          if (state is CalendarStartDaySelectedState) {
+          if (state is ExpenseStartDaySelectedState) {
             startDate = state.startDate
                 .dateFormat("yyyy-MM-dd HH:mm:ss.00000")
                 .toDate();
-          } else if (state is CalendarEndDaySelectedState) {
+          } else if (state is ExpenseEndDaySelectedState) {
             endDate =
                 state.endDate.dateFormat("yyyy-MM-dd HH:mm:ss.00000").toDate();
           }
@@ -139,7 +143,7 @@ class ExpenseListTile extends StatelessWidget {
             leading: categoryImageCard(
                 categoryName: todaysExpenseList[index].expense_categories),
             title: Text(
-              todaysExpenseList[index].expense_name,
+              todaysExpenseList[index].expense_name.capitialize,
               style: TextStyle(
                 fontSize: AppFontSize.fontSize14,
                 fontWeight: FontWeight.w600,
@@ -177,8 +181,8 @@ class ExpenseListTile extends StatelessWidget {
                 DateTime.now();
 
             context
-                .read<CalendarBloc>()
-                .add(CalendarStartDaySelectedEvent(startDate: selectedDay));
+                .read<ExpenseBloc>()
+                .add(BlocStartDaySelectedEvent(startDate: selectedDay));
           },
           style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(
@@ -199,8 +203,8 @@ class ExpenseListTile extends StatelessWidget {
                 DateTime.now();
 
             context
-                .read<CalendarBloc>()
-                .add(CalendarEndDaySelectedEvent(endDate: selectedDay));
+                .read<ExpenseBloc>()
+                .add(BlocEndDaySelectedEvent(endDate: selectedDay));
           },
           style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(
@@ -228,7 +232,7 @@ class ExpenseListTile extends StatelessWidget {
   }
 
   Widget analyticsTabView(
-      List<ExpenseDataModel> todaysExpenseList,
+      List<ExpenseDataModel> expenseList,
       Map<String, List<ExpenseDataModel>> categoryGroupedExpensList,
       BuildContext calendarBloc) {
     return SingleChildScrollView(
@@ -236,11 +240,53 @@ class ExpenseListTile extends StatelessWidget {
       child: Column(
         children: [
           if (isFilterTab) filterWidget(context: calendarBloc),
-          todaysExpenseList.isEmpty
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: textFormField(
+              controller: searchController,
+              hintText: "Dairy Milk",
+              icon: const Icon(CupertinoIcons.search),
+              onClear: () {
+                calendarBloc
+                    .read<ExpenseBloc>()
+                    .updateSearchName("", expenseList);
+                clearFocus();
+                searchController.clear();
+              },
+              onChanged: (val) {
+                calendarBloc
+                    .read<ExpenseBloc>()
+                    .updateSearchName(val, expenseList);
+              },
+            ),
+          ),
+          expenseList.isEmpty
               ? noExpenseFoundWidget(isFilterTab)
               : Scrollbar(
                   controller: controller,
-                  child: expenseListView(todaysExpenseList: todaysExpenseList),
+                  child: BlocBuilder<ExpenseBloc, ExpenseState>(
+                    builder: (context, state) {
+                      return StreamBuilder(
+                          stream: calendarBloc
+                              .read<ExpenseBloc>()
+                              .expenseListStream,
+                          builder: (context, snapshot) {
+                            return expenseListView(
+                                todaysExpenseList:
+                                    snapshot.data ?? expenseList);
+                          });
+                      // if (state is SearchingExpenseNameState) {
+                      //   // var list = expenseList
+                      //   //     .where((element) => element.expense_name
+                      //   //         .toLowerCase()
+                      //   //         .contains(state.name.toLowerCase()))
+                      //   //     .toList();
+                      //   return expenseListView(
+                      //       todaysExpenseList: state.expenseList);
+                      // }
+                      // return expenseListView(todaysExpenseList: expenseList);
+                    },
+                  ),
                 ),
         ],
       ),

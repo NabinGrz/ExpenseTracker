@@ -1,5 +1,5 @@
 import 'package:expensetracker/core/constants/app_colors.dart';
-import 'package:expensetracker/features/dashboard/bloc/calendar_event.dart';
+import 'package:expensetracker/features/dashboard/bloc/expense_event.dart';
 import 'package:expensetracker/global_widgets/expenses_list.dart';
 import 'package:expensetracker/global_widgets/sized_box.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,8 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/constants/app_styles.dart';
 import '../../../core/utils/firebase_query_handler.dart';
-import '../../dashboard/bloc/calendar_bloc.dart';
-import '../../dashboard/bloc/calendar_state.dart';
+import '../../dashboard/bloc/expense_bloc.dart';
+import '../../dashboard/bloc/expense_state.dart';
 import '../../dashboard/models/expense_model.dart';
 import '../../dashboard/widgets/add_expense_dialog.dart';
 
@@ -22,10 +22,10 @@ class ReportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CalendarBloc(),
+      create: (context) => ExpenseBloc(),
       child: DefaultTabController(
         length: 5,
-        child: BlocConsumer<CalendarBloc, CalendarState>(
+        child: BlocConsumer<ExpenseBloc, ExpenseState>(
           listener: (calendarBloc, state) {
             if (state is TabChangedSelectedState) {
               // showSnackBar(message: state.tabIndex.toString());
@@ -50,7 +50,7 @@ class ReportScreen extends StatelessWidget {
                     child: TabBar(
                       onTap: (value) {
                         calendarBloc
-                            .read<CalendarBloc>()
+                            .read<ExpenseBloc>()
                             .add(TabChangedSelectedEvent(tabIndex: value));
                       },
                       indicator: BoxDecoration(
@@ -131,10 +131,10 @@ class ReportScreen extends StatelessWidget {
   }
 
   Widget expenses(BuildContext calendarBloc) {
-    return BlocBuilder<CalendarBloc, CalendarState>(
+    return BlocBuilder<ExpenseBloc, ExpenseState>(
       builder: (calendarBloc, state) {
         return StreamBuilder(
-            stream: calendarBloc.read<CalendarBloc>().expenseListStream,
+            stream: calendarBloc.read<ExpenseBloc>().expenseListStream,
             builder: (calendarBloc, snapshot) {
               if (snapshot.data != null) {
                 totalAmount = 0;

@@ -1,6 +1,7 @@
 import 'package:expensetracker/core/constants/app_styles.dart';
 import 'package:expensetracker/core/utils/extensions.dart';
 import 'package:expensetracker/core/utils/firebase_query_handler.dart';
+import 'package:expensetracker/features/dashboard/bloc/expense_bloc.dart';
 import 'package:expensetracker/features/dashboard/models/expense_model.dart';
 import 'package:expensetracker/features/dashboard/widgets/card_widget.dart';
 import 'package:expensetracker/global_widgets/elevated_button.dart';
@@ -12,8 +13,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../global_widgets/category_image_card.dart';
 import '../../../global_widgets/no_expense_found_widget.dart';
-import '../bloc/calendar_bloc.dart';
-import '../bloc/calendar_state.dart';
+import '../bloc/expense_state.dart';
 import '../widgets/add_expense_dialog.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -24,7 +24,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CalendarBloc(),
+      create: (context) => ExpenseBloc(),
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0XFF1C2125),
@@ -35,9 +35,9 @@ class DashboardScreen extends StatelessWidget {
           ),
           elevation: 0,
         ),
-        body: BlocConsumer<CalendarBloc, CalendarState>(
+        body: BlocConsumer<ExpenseBloc, ExpenseState>(
           listener: (calendarBloc, state) {
-            if (state is CalendarInitialState) {
+            if (state is ExpenseInitialState) {
               FirebaseQueryHelper.getSingleDocument(
                   collectionPath: "total_cash", docID: "KND5OKuW1fntgtIOyEvT");
             }
