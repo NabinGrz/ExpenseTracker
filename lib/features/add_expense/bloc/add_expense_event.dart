@@ -13,6 +13,14 @@ class AddExpenseWidgetEvent extends AddExpenseEventMain {
       this.expenseCategoryController});
 }
 
+class FromBankEvent extends AddExpenseEventMain {
+  FromBankEvent();
+}
+
+class FromCashEvent extends AddExpenseEventMain {
+  FromCashEvent();
+}
+
 // class AddExpensePasswordUpdateEvent extends AddExpenseEventMain {
 //   final String password;
 //   AddExpensePasswordUpdateEvent({required this.password});
