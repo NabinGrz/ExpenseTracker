@@ -29,7 +29,7 @@ Widget pieChartTotalAmountWidget(
                   fontSize: AppFontSize.fontSize26,
                 )),
             Text(
-                "${todaysExpenseList.map((e) => double.parse(e.amount)).toList().sumOfDoublesInList}",
+                "${todaysExpenseList.map((e) => double.parse(e.amount.isEmpty ? "0" : e.amount)).toList().sumOfDoublesInList}",
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   color: Colors.blueGrey,

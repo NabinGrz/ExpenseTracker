@@ -119,7 +119,7 @@ Widget expenseCategoryWidget(
           sizedBox(
               height: 16,
               child: Text(
-                "Rs ${categoryGroupedExpensList[pieNames[i]]?.map((e) => double.parse(e.amount)).toList().sumOfDoublesInList}",
+                "Rs ${categoryGroupedExpensList[pieNames[i]]?.map((e) => double.parse(e.amount.isEmpty ? "2" : e.amount)).toList().sumOfDoublesInList}",
                 style: const TextStyle(
                   color: Colors.white,
                 ),

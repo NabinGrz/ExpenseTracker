@@ -143,7 +143,7 @@ class ExpenseListTile extends StatelessWidget {
             leading: categoryImageCard(
                 categoryName: todaysExpenseList[index].expense_categories),
             title: Text(
-              todaysExpenseList[index].expense_name.capitialize,
+              "${todaysExpenseList[index].expense_name.capitialize}${todaysExpenseList![index].id}",
               style: TextStyle(
                 fontSize: AppFontSize.fontSize14,
                 fontWeight: FontWeight.w600,
@@ -310,7 +310,8 @@ class ExpenseListTile extends StatelessWidget {
         case false:
           if (isAfter) {
             todaysExpenseList.add(exp);
-            totalAmount = totalAmount + int.parse(exp.amount);
+            totalAmount =
+                totalAmount + int.parse(exp.amount.isEmpty ? "0" : exp.amount);
           }
           break;
         case true:
