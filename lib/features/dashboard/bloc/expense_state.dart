@@ -21,6 +21,12 @@ class ExpenseEndDaySelectedState extends ExpenseState {
     required this.endDate,
   });
 }
+class DaySelectedState extends ExpenseState {
+  final DateTime selectedDate;
+  DaySelectedState({
+    required this.selectedDate,
+  });
+}
 
 class ExpenseDateRangeSelectedState extends ExpenseState {}
 

@@ -27,6 +27,12 @@ class TabChangedSelectedEvent extends ExpenseEvent {
     required this.tabIndex,
   });
 }
+class DaySelectedEvent extends ExpenseEvent {
+  final DateTime selectedDate;
+  DaySelectedEvent({
+    required this.selectedDate,
+  });
+}
 
 // class SearchingExpenseNameEvent extends BlocEventMain {
 //   final String name;
