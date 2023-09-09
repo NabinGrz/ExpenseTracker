@@ -29,6 +29,7 @@ class ExpenseListTile extends StatelessWidget {
 
   final ScrollController controller = ScrollController();
   DateTime endDate = DateTime.now();
+  DateTime? selectedDate;
   List<ExpenseDataModel> todaysExpenseList = [];
   int totalAmount = 0;
   Map<String, List<ExpenseDataModel>> categoryGroupedExpensList = {};
@@ -49,6 +50,11 @@ class ExpenseListTile extends StatelessWidget {
           } else if (state is ExpenseEndDaySelectedState) {
             endDate =
                 state.endDate.dateFormat("yyyy-MM-dd HH:mm:ss.00000").toDate();
+          } else if (state is DaySelectedState) {
+            selectedDate = state.selectedDate
+                .dateFormat("yyyy-MM-dd HH:mm:ss.00000")
+                .toDate();
+            // filterDataWithSpecificDateAndAssignValues(snapshot: selectedDate);
           }
         },
         builder: (calendarBloc, state) {
@@ -57,7 +63,8 @@ class ExpenseListTile extends StatelessWidget {
                   collectionPath: "expenses"),
               builder: (calendarBloc, snapshot) {
                 if (snapshot.data != null) {
-                  filterDataAndAssignValues(snapshot: snapshot);
+                  filterDataAndAssignValues(
+                      snapshot: snapshot, selectedDate: selectedDate);
                 }
                 return DefaultTabController(
                     length: 2,
@@ -125,39 +132,46 @@ class ExpenseListTile extends StatelessWidget {
       itemBuilder: (context, index) {
         return Card(
           margin: const EdgeInsets.all(2),
-          child: ListTile(
-            onLongPress: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AddExpenseDialog(
-                    isEdit: true,
-                    expenseDataModel: todaysExpenseList[index],
-                  );
-                },
-              );
+          child: GestureDetector(
+            onDoubleTap: () {
+              FirebaseQueryHelper.deleteDocumentOfCollection(
+                  collectionID: "expenses",
+                  docID: todaysExpenseList[index].id ?? "-1");
             },
-            minLeadingWidth: 0,
-            minVerticalPadding: 0,
-            contentPadding: EdgeInsets.symmetric(horizontal: 6.w),
-            leading: categoryImageCard(
-                categoryName: todaysExpenseList[index].expense_categories),
-            title: Text(
-              todaysExpenseList[index].expense_name.capitialize,
-              style: TextStyle(
-                fontSize: AppFontSize.fontSize14,
-                fontWeight: FontWeight.w600,
+            child: ListTile(
+              onLongPress: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AddExpenseDialog(
+                      isEdit: true,
+                      expenseDataModel: todaysExpenseList[index],
+                    );
+                  },
+                );
+              },
+              minLeadingWidth: 0,
+              minVerticalPadding: 0,
+              contentPadding: EdgeInsets.symmetric(horizontal: 6.w),
+              leading: categoryImageCard(
+                  categoryName: todaysExpenseList[index].expense_categories),
+              title: Text(
+                todaysExpenseList[index].expense_name.capitialize,
+                style: TextStyle(
+                  fontSize: AppFontSize.fontSize14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            subtitle: Text(
-              todaysExpenseList[index].expense_categories,
-              style: const TextStyle(color: Colors.grey),
-            ),
-            trailing: Text(
-              "Rs: ${todaysExpenseList[index].amount}",
-              style: TextStyle(
-                fontSize: AppFontSize.fontSize16,
-                fontWeight: FontWeight.bold,
+              subtitle: Text(
+                todaysExpenseList[index].expense_categories,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              trailing: Text(
+                "Rs: ${todaysExpenseList[index].amount}",
+                style: TextStyle(
+                  fontSize: AppFontSize.fontSize16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -167,53 +181,87 @@ class ExpenseListTile extends StatelessWidget {
   }
 
   Widget filterWidget({required BuildContext context}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        TextButton(
-          onPressed: () async {
-            var selectedDay = await showDatePicker(
-                  context: context,
-                  initialDate: startDate,
-                  firstDate: DateTime(2023, 1, 1),
-                  lastDate: DateTime.now(),
-                ) ??
-                DateTime.now();
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          TextButton(
+            onPressed: () async {
+              var selectedDay = await showDatePicker(
+                    context: context,
+                    initialDate: startDate,
+                    firstDate: DateTime(2023, 1, 1),
+                    lastDate: DateTime.now(),
+                  ) ??
+                  DateTime.now();
 
-            context
-                .read<ExpenseBloc>()
-                .add(BlocStartDaySelectedEvent(startDate: selectedDay));
-          },
-          style: TextButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6.r),
-                  side: BorderSide(
-                      color: AppColors.primaryColor.withOpacity(0.3)))),
-          child: Text(startDate.dateFormat('yMMMMd')),
-        ),
-        sizedBox(width: 4.w),
-        TextButton(
-          onPressed: () async {
-            var selectedDay = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2023, 1, 1),
-                  lastDate: DateTime.now(),
-                ) ??
-                DateTime.now();
+              context
+                  .read<ExpenseBloc>()
+                  .add(DaySelectedEvent(selectedDate: selectedDay));
+            },
+            style: TextButton.styleFrom(
+                backgroundColor: AppColors.primaryColor.withOpacity(0.5),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6.r),
+                    side: BorderSide(
+                        color: AppColors.primaryColor.withOpacity(0.3)))),
+            child: Text(
+              selectedDate?.dateFormat('MMM-dd') ?? "Select Day",
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  var selectedDay = await showDatePicker(
+                        context: context,
+                        initialDate: startDate,
+                        firstDate: DateTime(2023, 1, 1),
+                        lastDate: DateTime.now(),
+                      ) ??
+                      DateTime.now();
 
-            context
-                .read<ExpenseBloc>()
-                .add(BlocEndDaySelectedEvent(endDate: selectedDay));
-          },
-          style: TextButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6.r),
-                  side: BorderSide(
-                      color: AppColors.primaryColor.withOpacity(0.3)))),
-          child: Text(endDate.dateFormat('yMMMMd')),
-        ),
-      ],
+                  context
+                      .read<ExpenseBloc>()
+                      .add(BlocStartDaySelectedEvent(startDate: selectedDay));
+                },
+                style: TextButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.r),
+                        side: BorderSide(
+                            color: AppColors.primaryColor.withOpacity(0.3)))),
+                child: Text(startDate.dateFormat('yMMMd')),
+              ),
+              sizedBox(width: 4.w),
+              TextButton(
+                onPressed: () async {
+                  var selectedDay = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2023, 1, 1),
+                        lastDate: DateTime.now(),
+                      ) ??
+                      DateTime.now();
+
+                  context
+                      .read<ExpenseBloc>()
+                      .add(BlocEndDaySelectedEvent(endDate: selectedDay));
+                  selectedDate = null;
+                },
+                style: TextButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6.r),
+                        side: BorderSide(
+                            color: AppColors.primaryColor.withOpacity(0.3)))),
+                child: Text(endDate.dateFormat('yMMMd')),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -257,6 +305,10 @@ class ExpenseListTile extends StatelessWidget {
                 calendarBloc
                     .read<ExpenseBloc>()
                     .updateSearchName(val, expenseList);
+                if (val.isEmpty) {
+                  clearFocus();
+                  searchController.clear();
+                }
               },
             ),
           ),
@@ -275,16 +327,6 @@ class ExpenseListTile extends StatelessWidget {
                                 todaysExpenseList:
                                     snapshot.data ?? expenseList);
                           });
-                      // if (state is SearchingExpenseNameState) {
-                      //   // var list = expenseList
-                      //   //     .where((element) => element.expense_name
-                      //   //         .toLowerCase()
-                      //   //         .contains(state.name.toLowerCase()))
-                      //   //     .toList();
-                      //   return expenseListView(
-                      //       todaysExpenseList: state.expenseList);
-                      // }
-                      // return expenseListView(todaysExpenseList: expenseList);
                     },
                   ),
                 ),
@@ -294,7 +336,8 @@ class ExpenseListTile extends StatelessWidget {
   }
 
   void filterDataAndAssignValues(
-      {required AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot}) {
+      {required AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot,
+      DateTime? selectedDate}) {
     totalAmount = 0;
     todaysExpenseList.clear();
     for (var element in snapshot.data!.docs) {
@@ -310,16 +353,26 @@ class ExpenseListTile extends StatelessWidget {
         case false:
           if (isAfter) {
             todaysExpenseList.add(exp);
-            totalAmount = totalAmount + int.parse(exp.amount);
+            totalAmount =
+                totalAmount + int.parse(exp.amount.isEmpty ? "0" : exp.amount);
           }
           break;
         case true:
-          bool val = createdDate.isAfter(newStartDate) &&
-              createdDate.isBefore(endDate.add(const Duration(days: 1)));
-          if (val) {
-            todaysExpenseList.add(exp);
-            totalAmount = totalAmount + int.parse(exp.amount);
+          if (selectedDate == null) {
+            bool val = createdDate.isAfter(newStartDate) &&
+                createdDate.isBefore(endDate.add(const Duration(days: 1)));
+            if (val) {
+              todaysExpenseList.add(exp);
+              totalAmount = totalAmount + int.parse(exp.amount);
+            }
+          } else {
+            if (exp.created_at.toDate() == selectedDate) {
+              todaysExpenseList.add(exp);
+              totalAmount = totalAmount + int.parse(exp.amount);
+            }
+            print(exp.created_at.toDate());
           }
+
           break;
         default:
       }
