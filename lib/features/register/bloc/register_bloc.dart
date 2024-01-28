@@ -27,13 +27,12 @@ class RegisterBloc extends Bloc<RegisterEventMain, RegisterSState> {
           else
             {emit(RegisterConfirmPasswordUpdateState(password: event.password))}
         });
-    on<RegisterButtonPressedEvent>((event, emit) => {
-          emit(RegisterButtonPressedState(
+    on<RegisterButtonPressedEvent>((event, emit) => emit(RegisterButtonPressedState(
               registerDataModel: event.registerDataModel))
-        });
-    on<RegisteringUserEvent>((event, emit) => {emit(RegisteringUserState())});
-    on<RegisterSuccessEvent>((event, emit) => {emit(RegisterSuccessState())});
-    on<RegisterFailedEvent>((event, emit) => {emit(RegisterFailedState())});
+        );
+    on<RegisteringUserEvent>((event, emit) => emit(RegisteringUserState()));
+    on<RegisterSuccessEvent>((event, emit) => emit(RegisterSuccessState()));
+    on<RegisterFailedEvent>((event, emit) => emit(RegisterFailedState()));
   }
 
   updateEmail(String email) {

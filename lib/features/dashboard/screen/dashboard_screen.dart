@@ -166,7 +166,7 @@ class DashboardScreen extends StatelessWidget {
       var exp = ExpenseDataModel.fromJson(finalData);
       if (exp.created_at.toDate().dateFormat("yMd") ==
               DateTime.now().dateFormat("yMd") &&
-          double.parse(exp.amount) >= 500) {
+          double.parse(exp.amount.isEmpty ? "0" : exp.amount) >= 500) {
         todaysTopSpendingList.add(exp);
         totalAmount = totalAmount + int.parse(exp.amount);
       }

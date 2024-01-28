@@ -64,7 +64,8 @@ Widget expenseCategoryCard(
 
   for (int i = 0; i < categoryGroupedExpensList.length; i++) {
     categoryGroupedExpensList[pieNames[i]]?.sort(
-      (a, b) => double.parse(b.amount).compareTo(double.parse(a.amount)),
+      (a, b) => double.parse(b.amount.isEmpty ? "0" : b.amount)
+          .compareTo(double.parse(b.amount.isEmpty ? "0" : b.amount)),
     );
     var randomNumber = Random().nextInt(17);
     pieColors.add(Colors.primaries[randomNumber]);
