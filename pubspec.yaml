@@ -54,6 +54,7 @@ dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.0
+  shared_preferences: ^2.2.2 # Added shared_preferences
 
 dev_dependencies:
 

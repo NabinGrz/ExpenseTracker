@@ -14,15 +14,15 @@ import '../../../core/utils/firebase_query_handler.dart';
 import '../bloc/expense_bloc.dart';
 
 class CardWidget extends StatelessWidget {
-  final Color cardColor;
+  // final Color cardColor; // Removed cardColor
   final bool isTotalCash;
   final String cardTitle;
   final String cardAmount;
-  final BuildContext calendarBloc;
+  final BuildContext calendarBloc; // Keep for dialog context if needed, but ideally dialogs are also refactored
   CardWidget(
       {super.key,
       this.isTotalCash = false,
-      required this.cardColor,
+      // required this.cardColor, // Removed cardColor
       required this.cardTitle,
       required this.cardAmount,
       required this.calendarBloc});
@@ -32,7 +32,7 @@ class CardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 8,
-      color: cardColor,
+      color: Theme.of(context).colorScheme.primaryContainer, // Use theme color
       margin: EdgeInsets.only(left: 12.w, bottom: 12.h),
       child: SizedBox(
         height: 160.h,
@@ -43,7 +43,7 @@ class CardWidget extends StatelessWidget {
               top: -50,
               child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.07),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.07), // Theme-aware decorative color
                     shape: BoxShape.circle),
                 height: 150.h,
                 width: 150.w,
@@ -55,7 +55,7 @@ class CardWidget extends StatelessWidget {
                 angle: -math.pi / 4,
                 child: Container(
                   decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.09),
+                      color: Theme.of(context).colorScheme.primary.withOpacity(0.09), // Theme-aware decorative color
                       borderRadius: BorderRadius.circular(20)
                       // shape: BoxShape.circle,
                       ),
@@ -69,7 +69,7 @@ class CardWidget extends StatelessWidget {
               bottom: -30,
               child: Container(
                 decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.09),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.09), // Theme-aware decorative color
                     shape: BoxShape.circle),
                 height: 90.h,
                 width: 90.w,
@@ -89,7 +89,7 @@ class CardWidget extends StatelessWidget {
                         style: TextStyle(
                           fontSize: AppFontSize.fontSize14,
                           fontWeight: FontWeight.w300,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer, // Theme-aware text color
                         ),
                       ),
                       Row(
@@ -99,7 +99,7 @@ class CardWidget extends StatelessWidget {
                             style: TextStyle(
                               fontSize: AppFontSize.fontSize26,
                               fontWeight: FontWeight.w300,
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onPrimaryContainer, // Theme-aware text color
                             ),
                           ),
                           IconButton(
@@ -107,9 +107,9 @@ class CardWidget extends StatelessWidget {
                                 updateAmountDialog();
                                 // showSnackBar(message: "message");
                               },
-                              icon: const Icon(
+                              icon: Icon(
                                 Icons.edit,
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.onPrimaryContainer, // Theme-aware icon color
                               ))
                         ],
                       ),
@@ -119,7 +119,7 @@ class CardWidget extends StatelessWidget {
                         style: TextStyle(
                           fontSize: AppFontSize.fontSize14,
                           fontWeight: FontWeight.w300,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimaryContainer, // Theme-aware text color
                         ),
                       ),
                     ],
@@ -158,7 +158,7 @@ class CardWidget extends StatelessWidget {
               child: Icon(
                 CupertinoIcons.clear,
                 size: 15.h,
-                color: Colors.red,
+                color: Theme.of(context).colorScheme.error, // Theme-aware error color
               ),
             ),
             textInputAction: TextInputAction.done,

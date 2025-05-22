@@ -1,40 +1,42 @@
+import 'package:expensetracker/core/constants/app_colors.dart';
 import 'package:expensetracker/core/constants/app_strings.dart';
 import 'package:flutter/material.dart';
 
-Color getCardColorByCategory(String categoryName) {
+Color getCardColorByCategory(BuildContext context, String categoryName) {
+  final isDarkMode = Theme.of(context).brightness == Brightness.dark;
   switch (categoryName.toLowerCase()) {
     case AppString.categoryFood:
-      return const Color.fromARGB(255, 189, 255, 236);
+      return isDarkMode ? AppColors.categoryFoodDark : AppColors.categoryFoodLight;
     case AppString.categoryClothing:
-      return const Color.fromARGB(255, 181, 218, 255);
+      return isDarkMode ? AppColors.categoryClothingDark : AppColors.categoryClothingLight;
     case AppString.categoryRent:
-      return const Color.fromARGB(255, 255, 188, 188);
+      return isDarkMode ? AppColors.categoryRentDark : AppColors.categoryRentLight;
     case AppString.categoryBike:
-      return const Color.fromARGB(255, 254, 226, 184);
+      return isDarkMode ? AppColors.categoryBikeDark : AppColors.categoryBikeLight;
     case AppString.categoryTransport:
-      return const Color.fromARGB(255, 255, 185, 208);
+      return isDarkMode ? AppColors.categoryTransportDark : AppColors.categoryTransportLight;
     case AppString.categoryUtils:
-      return const Color.fromARGB(255, 182, 222, 255);
+      return isDarkMode ? AppColors.categoryUtilsDark : AppColors.categoryUtilsLight;
     case AppString.categoryKhaja:
-      return const Color.fromARGB(255, 197, 182, 255);
+      return isDarkMode ? AppColors.categoryKhajaDark : AppColors.categoryKhajaLight;
     case AppString.categoryMilk:
-      return const Color.fromARGB(255, 182, 243, 255);
+      return isDarkMode ? AppColors.categoryMilkDark : AppColors.categoryMilkLight;
     case AppString.categoryWater:
-      return const Color.fromARGB(255, 255, 236, 182);
+      return isDarkMode ? AppColors.categoryWaterDark : AppColors.categoryWaterLight;
     case AppString.categoryGrocery:
-      return const Color.fromARGB(255, 173, 168, 255);
+      return isDarkMode ? AppColors.categoryGroceryDark : AppColors.categoryGroceryLight;
     case AppString.categoryChocolate:
-      return const Color.fromARGB(255, 205, 204, 204);
-    case AppString.categoryMeat:
-      return const Color.fromARGB(255, 255, 182, 182);
+      return isDarkMode ? AppColors.categoryChocolateDark : AppColors.categoryChocolateLight;
+    case AppString.categoryMeat: // Uses the same colors as Rent
+      return isDarkMode ? AppColors.categoryRentDark : AppColors.categoryRentLight;
     case AppString.categoryStationary:
-      return const Color.fromARGB(255, 255, 182, 253);
+      return isDarkMode ? AppColors.categoryStationaryDark : AppColors.categoryStationaryLight;
     case AppString.categoryFruits:
-      return const Color.fromARGB(255, 255, 223, 182);
+      return isDarkMode ? AppColors.categoryFruitsDark : AppColors.categoryFruitsLight;
     case AppString.categoryCosmetic:
-      return const Color.fromARGB(255, 244, 255, 182);
+      return isDarkMode ? AppColors.categoryCosmeticDark : AppColors.categoryCosmeticLight;
     default:
-      return const Color.fromARGB(255, 199, 255, 201);
+      return isDarkMode ? AppColors.categoryDefaultDark : AppColors.categoryDefaultLight;
   }
 }
 
@@ -75,9 +77,9 @@ String getIconPathByCategory(String categoryName) {
   }
 }
 
-Widget categoryImageCard({required String categoryName}) {
+Widget categoryImageCard({required BuildContext context, required String categoryName}) {
   return Card(
-    color: getCardColorByCategory(categoryName),
+    color: getCardColorByCategory(context, categoryName), // Pass context
     margin: EdgeInsets.zero,
     child: Padding(
       padding: const EdgeInsets.all(8.0),
