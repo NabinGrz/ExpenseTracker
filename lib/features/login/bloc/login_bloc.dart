@@ -23,11 +23,11 @@ class LoginBloc extends Bloc<LoginEventMain, LoginState> {
             {emit(LoginPasswordUpdateState(password: event.password))}
         });
     on<LoginButtonPressedEvent>((event, emit) =>
-        {emit(LoginButtonPressedState(loginDataModel: event.loginDataModel))});
-    on<LoginSuccessEvent>((event, emit) => {emit(LoginSuccessState())});
+        emit(LoginButtonPressedState(loginDataModel: event.loginDataModel)));
+    on<LoginSuccessEvent>((event, emit) => emit(LoginSuccessState()));
     on<LoginFailedEvent>(
-        (event, emit) => {emit(LoginFailedState(message: event.message))});
-    on<LoggingUserEvent>((event, emit) => {emit(LoggingUserState())});
+        (event, emit) => emit(LoginFailedState(message: event.message)));
+    on<LoggingUserEvent>((event, emit) => emit(LoggingUserState()));
   }
   updateEmail(String email) {
     _emailController.add(email);

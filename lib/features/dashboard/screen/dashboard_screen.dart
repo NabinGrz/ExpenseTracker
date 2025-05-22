@@ -81,7 +81,7 @@ class DashboardScreen extends StatelessWidget {
                                 if (snapshot.data != null) {
                                   amounts.clear();
                                   snapshot.data?.data()?.forEach((key, value) {
-                                    amounts.add(value);
+                                    amounts.add(double.parse(value.toString()));
                                   });
                                 }
                                 return !snapshot.hasData
@@ -166,7 +166,7 @@ class DashboardScreen extends StatelessWidget {
       var exp = ExpenseDataModel.fromJson(finalData);
       if (exp.created_at.toDate().dateFormat("yMd") ==
               DateTime.now().dateFormat("yMd") &&
-          double.parse(exp.amount) >= 500) {
+          double.parse(exp.amount.isEmpty ? "0" : exp.amount) >= 500) {
         todaysTopSpendingList.add(exp);
         totalAmount = totalAmount + int.parse(exp.amount);
       }
@@ -275,39 +275,44 @@ class DashboardScreen extends StatelessWidget {
               Wrap(
                 spacing: 0,
                 children: expensesList[index]
-                    .map((val) => ListTile(
-                          minLeadingWidth: 0,
-                          minVerticalPadding: 0,
-                          contentPadding: EdgeInsets.zero,
-                          leading: categoryImageCard(
-                            categoryName: val.expense_categories,
-                          ),
-                          onLongPress: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AddExpenseDialog(
-                                  isEdit: true,
-                                  expenseDataModel: val,
-                                );
-                              },
-                            );
-                          },
-                          title: Text(val.expense_name,
-                              style: Theme.of(context).textTheme.displaySmall),
-                          subtitle: Text(val.expense_categories,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
-                                  ?.copyWith(
-                                    color: Colors.grey,
-                                  )),
-                          trailing: Text(
-                            "Rs: ${val.amount}",
-                            style: TextStyle(
-                              fontSize: AppFontSize.fontSize16,
-                              color: const Color(0xff3cb980),
-                              fontWeight: FontWeight.bold,
+                    .map((val) => GestureDetector(
+                          onDoubleTap: () =>
+                              onDissmissed(context: context, index: index),
+                          child: ListTile(
+                            minLeadingWidth: 0,
+                            minVerticalPadding: 0,
+                            contentPadding: EdgeInsets.zero,
+                            leading: categoryImageCard(
+                              categoryName: val.expense_categories,
+                            ),
+                            onLongPress: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AddExpenseDialog(
+                                    isEdit: true,
+                                    expenseDataModel: val,
+                                  );
+                                },
+                              );
+                            },
+                            title: Text(val.expense_name,
+                                style:
+                                    Theme.of(context).textTheme.displaySmall),
+                            subtitle: Text(val.expense_categories,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color: Colors.grey,
+                                    )),
+                            trailing: Text(
+                              "Rs: ${val.amount}",
+                              style: TextStyle(
+                                fontSize: AppFontSize.fontSize16,
+                                color: const Color(0xff3cb980),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ))

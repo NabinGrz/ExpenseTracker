@@ -125,39 +125,46 @@ class ExpenseListTile extends StatelessWidget {
       itemBuilder: (context, index) {
         return Card(
           margin: const EdgeInsets.all(2),
-          child: ListTile(
-            onLongPress: () {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AddExpenseDialog(
-                    isEdit: true,
-                    expenseDataModel: todaysExpenseList[index],
-                  );
-                },
-              );
+          child: GestureDetector(
+            onDoubleTap: () {
+              FirebaseQueryHelper.deleteDocumentOfCollection(
+                  collectionID: "expenses",
+                  docID: todaysExpenseList[index].id ?? "-1");
             },
-            minLeadingWidth: 0,
-            minVerticalPadding: 0,
-            contentPadding: EdgeInsets.symmetric(horizontal: 6.w),
-            leading: categoryImageCard(
-                categoryName: todaysExpenseList[index].expense_categories),
-            title: Text(
-              todaysExpenseList[index].expense_name.capitialize,
-              style: TextStyle(
-                fontSize: AppFontSize.fontSize14,
-                fontWeight: FontWeight.w600,
+            child: ListTile(
+              onLongPress: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AddExpenseDialog(
+                      isEdit: true,
+                      expenseDataModel: todaysExpenseList[index],
+                    );
+                  },
+                );
+              },
+              minLeadingWidth: 0,
+              minVerticalPadding: 0,
+              contentPadding: EdgeInsets.symmetric(horizontal: 6.w),
+              leading: categoryImageCard(
+                  categoryName: todaysExpenseList[index].expense_categories),
+              title: Text(
+                todaysExpenseList[index].expense_name.capitialize,
+                style: TextStyle(
+                  fontSize: AppFontSize.fontSize14,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            subtitle: Text(
-              todaysExpenseList[index].expense_categories,
-              style: const TextStyle(color: Colors.grey),
-            ),
-            trailing: Text(
-              "Rs: ${todaysExpenseList[index].amount}",
-              style: TextStyle(
-                fontSize: AppFontSize.fontSize16,
-                fontWeight: FontWeight.bold,
+              subtitle: Text(
+                todaysExpenseList[index].expense_categories,
+                style: const TextStyle(color: Colors.grey),
+              ),
+              trailing: Text(
+                "Rs: ${todaysExpenseList[index].amount}",
+                style: TextStyle(
+                  fontSize: AppFontSize.fontSize16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -310,7 +317,8 @@ class ExpenseListTile extends StatelessWidget {
         case false:
           if (isAfter) {
             todaysExpenseList.add(exp);
-            totalAmount = totalAmount + int.parse(exp.amount);
+            totalAmount =
+                totalAmount + int.parse(exp.amount.isEmpty ? "0" : exp.amount);
           }
           break;
         case true:

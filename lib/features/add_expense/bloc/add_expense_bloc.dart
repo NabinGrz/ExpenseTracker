@@ -13,6 +13,10 @@ class AddExpenseBloc extends Bloc<AddExpenseEventMain, AddExpenseState> {
         expenseNameController: event.expenseNameController,
         amountController: event.amountController,
         expenseCategoryController: event.expenseCategoryController)));
+    on<FromBankEvent>((event, emit) => emit(FromBankState()));
+    on<FromCashEvent>((event, emit) => emit(FromCashState()));
+
+    add(FromCashEvent());
   }
   final _expenseNameController = BehaviorSubject<String>();
   Stream<String> get expenseNameStream => _expenseNameController.stream;
@@ -46,10 +50,20 @@ class AddExpenseBloc extends Bloc<AddExpenseEventMain, AddExpenseState> {
           return null;
         }
       });
+
+  final deductFromBank = StreamController<bool>.broadcast();
+  Stream<bool> watchDeductFromBank() => deductFromBank.stream;
+
+  updateDeductFromBank(bool val) {
+    deductFromBank.add(val);
+  }
+
+  bool isBank = false;
   // final _widgetListController = StreamController<List<String>>.broadcast();
   //**NOTE these two are same thing */
   // final _expenseNameListController =
   //     BehaviorSubject<List<TextEditingController>>();
+
   // final List<TextEditingController> _expenseNameList = [];
   // Stream<List<TextEditingController>> get expenseNameListStream =>
   //     _expenseNameListController.stream;

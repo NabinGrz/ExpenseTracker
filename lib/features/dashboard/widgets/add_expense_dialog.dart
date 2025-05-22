@@ -11,6 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/utils/clear_focus.dart';
 import '../../add_expense/bloc/add_expense_bloc.dart';
+import '../../add_expense/bloc/add_expense_event.dart';
 import '../../add_expense/bloc/add_expense_state.dart';
 
 class AddExpenseDialog extends StatelessWidget {
@@ -119,6 +120,34 @@ class AddExpenseDialog extends StatelessWidget {
                   },
                 ),
                 sizedBox(height: 10),
+                StreamBuilder(
+                    stream: addExpenseBloc
+                        .read<AddExpenseBloc>()
+                        .watchDeductFromBank(),
+                    builder: (context, snapshot) {
+                      bool value = snapshot.data ?? true;
+                      return CheckboxListTile(
+                        title: Text(
+                            value ? "Deduct from Cash" : "Deduct from Bank"),
+                        value: value,
+                        onChanged: (val) {
+                          addExpenseBloc
+                              .read<AddExpenseBloc>()
+                              .updateDeductFromBank(val!);
+                          // addExpenseBloc.read<AddExpenseBloc>().isBank = !val;
+                          if (val) {
+                            addExpenseBloc
+                                .read<AddExpenseBloc>()
+                                .add(FromCashEvent());
+                          } else {
+                            addExpenseBloc
+                                .read<AddExpenseBloc>()
+                                .add(FromBankEvent());
+                          }
+                        },
+                      );
+                    }),
+                sizedBox(height: 10),
                 StreamBuilder<ExpenseDataModel?>(
                     stream: addExpenseBloc.read<AddExpenseBloc>().expenseData,
                     builder: (addExpenseBloc, snapshot) {
@@ -166,21 +195,34 @@ class AddExpenseDialog extends StatelessWidget {
                                             docID: "KND5OKuW1fntgtIOyEvT");
                                     var amount =
                                         data?.data() as Map<String, dynamic>;
-                                    double cashAmount = amount['cash_amount'];
-                                    cashAmount;
+                                    double cashAmount = state is FromCashState
+                                        ? double.parse(
+                                            amount['cash_amount'].toString())
+                                        : double.parse(
+                                            amount['in_bank'].toString());
                                     var cash = FirebaseQueryHelper
                                         .firebaseFireStore
                                         .collection("total_cash")
                                         .doc("KND5OKuW1fntgtIOyEvT");
-                                    var newAmount = {
-                                      'cash_amount': cashAmount -
-                                          double.parse(amountController.text)
-                                    };
+                                    var newAmount = state is FromCashState
+                                        ? {
+                                            'cash_amount': cashAmount -
+                                                double.parse(
+                                                    amountController.text)
+                                          }
+                                        : {
+                                            'in_bank': cashAmount -
+                                                double.parse(
+                                                    amountController.text)
+                                          };
+
                                     Navigator.pop(context);
                                     await cash.update(newAmount);
                                   }
                                 },
-                          child: Text(isEdit ? "Update" : "Add"));
+                          child: Text(isEdit
+                              ? "Update"
+                              : "Add ${state is FromCashState}"));
                     })
               ],
             );

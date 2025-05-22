@@ -32,5 +32,6 @@ extension DoubleArithmeticExtensions on List<double> {
 }
 
 extension StringCapitialization on String {
-  String get capitialize => this[0].toUpperCase() + substring(1).toLowerCase();
+  String get capitialize =>
+      isNotEmpty ? this[0].toUpperCase() + substring(1).toLowerCase() : this;
 }

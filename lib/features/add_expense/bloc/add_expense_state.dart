@@ -16,3 +16,11 @@ class AddExpenseWidgetState extends AddExpenseState {
       this.amountController,
       this.expenseCategoryController});
 }
+
+class FromBankState extends AddExpenseState {
+  FromBankState();
+}
+
+class FromCashState extends AddExpenseState {
+  FromCashState();
+}
